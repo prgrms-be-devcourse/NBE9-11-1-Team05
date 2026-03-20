@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>업주 상품 수정</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f7f7f7;
+            margin: 0;
+            padding: 40px;
+        }
+
+        .container {
+            max-width: 720px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+        }
+
+        h1 {
+            margin-top: 0;
+            font-size: 28px;
+        }
+
+        .form-group {
+            margin-bottom: 18px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+
+        input, textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            box-sizing: border-box;
+            font-size: 14px;
+        }
+
+        textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        img {
+            width: 220px;
+            height: 220px;
+            object-fit: cover;
+            border-radius: 12px;
+            border: 1px solid #ddd;
+            display: block;
+            margin-top: 10px;
+        }
+
+        .button-wrap {
+            display: flex;
+            gap: 12px;
+            margin-top: 24px;
+        }
+
+        button {
+            border: none;
+            background: #4b2e1e;
+            color: white;
+            padding: 12px 20px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 15px;
+        }
+
+        button:hover {
+            opacity: 0.9;
+        }
+
+        .sold-out {
+            color: #d32f2f;
+            font-weight: bold;
+            margin-top: 8px;
+        }
+
+        .success {
+            margin-top: 20px;
+            color: green;
+            font-weight: bold;
+        }
+
+        .error {
+            margin-top: 20px;
+            color: red;
+            font-weight: bold;
+        }
+
+        .hint {
+            color: #777;
+            font-size: 13px;
+            margin-top: 4px;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>업주 상품 수정 페이지</h1>
+
+    <div class="form-group">
+        <label for="coffeeId">상품 ID</label>
+        <input type="number" id="coffeeId" readonly />
+    </div>
+
+    <div class="form-group">
+        <label for="name">원두 이름</label>
+        <input type="text" id="name" />
+    </div>
+
+    <div class="form-group">
+        <label for="price">원두 가격</label>
+        <input type="number" id="price" />
+    </div>
+
+    <div class="form-group">
+        <label for="quantity">원두 수량</label>
+        <input type="number" id="quantity" />
+        <div class="hint">0으로 저장하면 자동으로 품절 처리됩니다.</div>
+        <div id="soldOutText" class="sold-out"></div>
+    </div>
+
+    <div class="form-group">
+        <label for="imageUrl">상품 이미지 URL</label>
+        <input type="text" id="imageUrl" />
+        <img id="previewImage" src="" alt="상품 이미지 미리보기" />
+    </div>
+
+    <div class="form-group">
+        <label for="description">원두 설명</label>
+        <textarea id="description"></textarea>
+    </div>
+
+    <div class="button-wrap">
+        <button onclick="saveCoffee()">저장</button>
+        <button type="button">취소</button>
+    </div>
+
+    <div id="message"></div>
+</div>
+
+<script>
+    const messageEl = document.getElementById("message");
+    const soldOutTextEl = document.getElementById("soldOutText");
+    const previewImageEl = document.getElementById("previewImage");
+
+    function getIdFromQuery() {
+        const params = new URLSearchParams(window.location.search);
+        return params.get("id") || "1";
+    }
+
+    function updatePreview() {
+        const imageUrl = document.getElementById("imageUrl").value;
+        previewImageEl.src = imageUrl || "";
+    }
+
+    function updateSoldOutText() {
+        const quantity = Number(document.getElementById("quantity").value || 0);
+        soldOutTextEl.textContent = quantity <= 0 ? "현재 상태: 품절(SOLD OUT)" : "현재 상태: 판매 가능";
+    }
+
+    async function loadCoffee() {
+        const id = document.getElementById("coffeeId").value;
+
+        try {
+            const response = await fetch(`/api/coffees/${id}`);
+            if (!response.ok) {
+                throw new Error("상품 조회 실패");
+            }
+
+            const coffee = await response.json();
+
+            document.getElementById("name").value = coffee.name;
+            document.getElementById("price").value = coffee.price;
+            document.getElementById("quantity").value = coffee.quantity;
+            document.getElementById("imageUrl").value = coffee.imageUrl;
+            document.getElementById("description").value = coffee.description;
+
+            updatePreview();
+            updateSoldOutText();
+
+            messageEl.className = "success";
+            messageEl.textContent = "상품 정보를 불러왔습니다.";
+        } catch (e) {
+            messageEl.className = "error";
+            messageEl.textContent = e.message;
+        }
+    }
+
+    async function saveCoffee() {
+        const id = document.getElementById("coffeeId").value;
+
+        const body = {
+            name: document.getElementById("name").value,
+            price: Number(document.getElementById("price").value),
+            quantity: Number(document.getElementById("quantity").value),
+            imageUrl: document.getElementById("imageUrl").value,
+            description: document.getElementById("description").value
+        };
+
+        try {
+            const response = await fetch(`/api/coffees/${id}`, {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(body)
+            });
+
+            if (!response.ok) {
+                const errorText = await response.text();
+                throw new Error(errorText || "상품 수정 실패");
+            }
+
+            const result = await response.json();
+
+            document.getElementById("name").value = result.name;
+            document.getElementById("price").value = result.price;
+            document.getElementById("quantity").value = result.quantity;
+            document.getElementById("imageUrl").value = result.imageUrl;
+            document.getElementById("description").value = result.description;
+
+            updatePreview();
+            updateSoldOutText();
+
+            messageEl.className = "success";
+            messageEl.textContent = "상품 수정이 저장되었습니다.";
+        } catch (e) {
+            messageEl.className = "error";
+            messageEl.textContent = e.message;
+        }
+    }
+
+    document.getElementById("imageUrl").addEventListener("input", updatePreview);
+    document.getElementById("quantity").addEventListener("input", updateSoldOutText);
+
+    window.onload = () => {
+        document.getElementById("coffeeId").value = getIdFromQuery();
+        loadCoffee();
+    };
+</script>
+</body>
+</html>
