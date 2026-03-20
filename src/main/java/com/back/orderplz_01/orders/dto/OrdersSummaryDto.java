@@ -11,7 +11,7 @@ import lombok.Getter;
 @AllArgsConstructor
 public class OrdersSummaryDto {
 
-	private Integer id;
+	private Long id;
 
 	private String email;
 
@@ -21,11 +21,11 @@ public class OrdersSummaryDto {
 
 	private Long quantity;
 
-	private OrderStatus orderStatus;
+	private OrdersStatus ordersStatus;
 
 	public static OrdersSummaryDto from(Orders orders) {
 		return new OrdersSummaryDto(
-			orders.getId(),
+			orders.getId() == null ? null : orders.getId().longValue(),
 			orders.getEmail(),
 			orders.getOrderedAt(),
 			orders.getTotalAmount(),

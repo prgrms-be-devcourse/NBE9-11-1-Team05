@@ -11,4 +11,6 @@ public interface OrdersRepository extends JpaRepository<Orders, Integer> {
 	List<Orders> findAllByOrderByOrderedAtDesc();
 
 	List<Orders> findByEmailIgnoreCaseOrderByOrderedAtDesc(String email);
+
+	List<Orders> findByEmailIgnoreCaseAndZipCodeIgnoreCaseOrderByOrderedAtDesc(String email, String zipCode);
 }
