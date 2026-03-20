@@ -11,4 +11,7 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("/coffees")
 @Tag(name = "CoffeeController", description = "커피 API")
 public class CoffeeController {
+
+
+
 }
