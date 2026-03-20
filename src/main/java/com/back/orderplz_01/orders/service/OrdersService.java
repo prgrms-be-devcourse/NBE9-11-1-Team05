@@ -16,15 +16,15 @@ public class OrdersService {
 	private final OrdersRepository ordersRepository;
 
 	public List<OrdersSummaryDto> findAll() {
-		return ordersRepository.findAll()
-			.stream()
-			.map(OrdersSummaryDto::from)
-			.toList();
+		return toSummaryDtos(ordersRepository.findAllByOrderByOrderedAtDesc());
 	}
 
 	public List<OrdersSummaryDto> findByEmail(String email) {
-		return ordersRepository.findByEmail(email)
-			.stream()
+		return toSummaryDtos(ordersRepository.findByEmailIgnoreCaseOrderByOrderedAtDesc(email));
+	}
+
+	private List<OrdersSummaryDto> toSummaryDtos(List<Orders> orders) {
+		return orders.stream()
 			.map(OrdersSummaryDto::from)
 			.toList();
 	}

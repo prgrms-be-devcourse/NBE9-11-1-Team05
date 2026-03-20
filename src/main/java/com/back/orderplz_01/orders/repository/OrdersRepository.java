@@ -8,5 +8,7 @@ import com.back.orderplz_01.orders.entity.Orders;
 
 public interface OrdersRepository extends JpaRepository<Orders, Integer> {
 
-	List<Orders> findByEmail(String email);
+	List<Orders> findAllByOrderByOrderedAtDesc();
+
+	List<Orders> findByEmailIgnoreCaseOrderByOrderedAtDesc(String email);
 }
