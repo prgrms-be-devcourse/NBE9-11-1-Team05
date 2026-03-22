@@ -6,13 +6,14 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.back.orderplz_01.coffee.entity.Coffee;
 import com.back.orderplz_01.coffee.repository.CoffeeRepository;
+import com.back.orderplz_01.global.apiRes.ApiRes;
 import com.back.orderplz_01.orders.dto.request.CoffeeOrderList;
 import com.back.orderplz_01.orders.dto.request.CoffeeOrderReq;
-import com.back.orderplz_01.orders.dto.response.CoffeeOrderRes;
 import com.back.orderplz_01.orders.entity.OrderStatus;
 import com.back.orderplz_01.orders.entity.Orders;
 import com.back.orderplz_01.orders.repository.OrdersRepository;
@@ -26,7 +27,7 @@ public class OrdersService {
 	private final OrdersRepository ordersRepository;
 	private final CoffeeRepository coffeeRepository;
 
-	public CoffeeOrderRes pay(CoffeeOrderReq req) {
+	public ResponseEntity<ApiRes<Void>> pay(CoffeeOrderReq req) {
 		// 커피 재고 여부 확인
 		Map<Long, Coffee> coffeeMap = checkCoffee(req.coffeeOrderList());
 
@@ -53,7 +54,7 @@ public class OrdersService {
 		}
 
 		// ApiResponse에 오후 2시 기준 메시지 담기
-
+		return ResponseEntity.ok(new ApiRes<>("주문이 완료되었습니다.", null));
 	}
 
 	private boolean checkDuplicateOrder(CoffeeOrderReq req,  Map<Long, Coffee> coffeeMap) {

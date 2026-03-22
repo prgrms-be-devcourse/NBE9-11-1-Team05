@@ -1,13 +1,14 @@
 package com.back.orderplz_01.orders.controller;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.back.orderplz_01.global.apiRes.ApiRes;
 import com.back.orderplz_01.orders.dto.request.CoffeeOrderReq;
-import com.back.orderplz_01.orders.dto.response.CoffeeOrderRes;
 import com.back.orderplz_01.orders.service.OrdersService;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -26,7 +27,7 @@ public class OrdersController {
 	@PostMapping
 	@Operation(summary = "원두 결제하기")
 	@Transactional
-	public CoffeeOrderRes pay(@RequestBody @Valid CoffeeOrderReq req) {
-		ordersService.pay(req);
+	public ResponseEntity<ApiRes<Void>> pay(@RequestBody @Valid CoffeeOrderReq req) {
+		return ordersService.pay(req);
 	}
 }
