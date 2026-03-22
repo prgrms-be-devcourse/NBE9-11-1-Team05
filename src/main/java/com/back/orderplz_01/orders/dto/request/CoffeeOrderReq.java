@@ -9,6 +9,7 @@ import jakarta.validation.constraints.NotBlank;
 public record CoffeeOrderReq(
 
 	@Email
+	@NotBlank(message = "이메일은 필수 값입니다.")
 	String email,
 
 	@NotBlank(message = "주소는 필수 값입니다.")

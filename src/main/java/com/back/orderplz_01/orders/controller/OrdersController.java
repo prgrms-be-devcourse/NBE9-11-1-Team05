@@ -27,6 +27,6 @@ public class OrdersController {
 	@Operation(summary = "원두 결제하기")
 	@Transactional
 	public CoffeeOrderRes pay(@RequestBody @Valid CoffeeOrderReq req) {
-		ordersService.pay(req)
+		ordersService.pay(req);
 	}
 }
