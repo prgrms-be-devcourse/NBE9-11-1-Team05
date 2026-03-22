@@ -1,7 +1,6 @@
 package com.back.orderplz_01.orders.controller;
 
 import com.back.orderplz_01.orders.dto.OrderStatusUpdateRequest;
-import com.back.orderplz_01.orders.entity.OrderStatus;
 import com.back.orderplz_01.orders.service.OrdersService;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.http.ResponseEntity;
