@@ -50,4 +50,8 @@ public class Orders extends BaseEntity {
 	@JoinColumn(name = "coffee_id", nullable = false)
 	private Coffee coffee;
 
+	public void changeStatus(OrderStatus newStatus) {
+		this.orderStatus = newStatus;
+	}
+
 }

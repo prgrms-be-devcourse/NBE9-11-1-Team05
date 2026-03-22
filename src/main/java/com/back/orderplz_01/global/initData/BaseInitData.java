@@ -1,5 +1,10 @@
 package com.back.orderplz_01.global.initData;
 
+import com.back.orderplz_01.coffee.entity.Coffee;
+import com.back.orderplz_01.coffee.repository.CoffeeRepository;
+import com.back.orderplz_01.orders.entity.OrderStatus;
+import com.back.orderplz_01.orders.entity.Orders;
+import com.back.orderplz_01.orders.repository.OrdersRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.context.annotation.Bean;
@@ -8,6 +13,8 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
+
+import java.time.LocalDateTime;
 
 @Configuration
 @RequiredArgsConstructor
