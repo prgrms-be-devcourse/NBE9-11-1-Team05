@@ -32,4 +32,13 @@ public class Coffee extends BaseEntity {
 		}
 		this.quantity -= quantity;
 	}
+
+	public void update(String name, String description, Long price, Long quantity) {
+		this.name = name;
+		this.description = description;
+		this.price = price;
+		this.quantity = quantity;
+
+	}
+
 }
