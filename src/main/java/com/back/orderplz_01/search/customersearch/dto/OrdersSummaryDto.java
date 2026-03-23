@@ -1,9 +1,10 @@
-package com.back.orderplz_01.orders.dto;
+package com.back.orderplz_01.search.customersearch.dto;
 
 import java.time.LocalDateTime;
 
-import com.back.orderplz_01.orders.entity.Orders;
 import com.back.orderplz_01.orders.entity.OrderStatus;
+import com.back.orderplz_01.orders.entity.Orders;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -11,7 +12,7 @@ import lombok.Getter;
 @AllArgsConstructor
 public class OrdersSummaryDto {
 
-	private Long id;
+	private Integer id;
 
 	private String email;
 
@@ -21,11 +22,11 @@ public class OrdersSummaryDto {
 
 	private Long quantity;
 
-	private OrdersStatus ordersStatus;
+	private OrderStatus orderStatus;
 
 	public static OrdersSummaryDto from(Orders orders) {
 		return new OrdersSummaryDto(
-			orders.getId() == null ? null : orders.getId().longValue(),
+			orders.getId(),
 			orders.getEmail(),
 			orders.getOrderedAt(),
 			orders.getTotalAmount(),
@@ -34,4 +35,3 @@ public class OrdersSummaryDto {
 		);
 	}
 }
-
