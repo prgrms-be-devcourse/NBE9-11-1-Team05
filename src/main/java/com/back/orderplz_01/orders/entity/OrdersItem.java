@@ -30,4 +30,8 @@ public class OrdersItem extends BaseEntity {
 	@ManyToOne
 	@JoinColumn(name = "coffee_id")
 	private Coffee coffee;
+
+	public void addQuantity(Long quantity) {
+		this.quantity += quantity;
+	}
 }
