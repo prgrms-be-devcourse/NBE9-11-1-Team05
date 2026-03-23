@@ -19,4 +19,13 @@ public class SpringDoc {
                 .pathsToMatch("/api/coffees/**")       // 이 그룹에 묶어줄 API 주소 패턴 (컨트롤러 주소에 맞춤)
                 .build();
     }
+
+    // Swagger 테스트 용(임시)
+    @Bean
+    public GroupedOpenApi ordersApi() {
+        return GroupedOpenApi.builder()
+                .group("업주용 API")
+                .pathsToMatch("/api/orders/**")
+                .build();
+    }
 }
