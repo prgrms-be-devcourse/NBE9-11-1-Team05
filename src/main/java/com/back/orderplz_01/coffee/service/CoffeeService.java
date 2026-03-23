@@ -1,15 +1,15 @@
 package com.back.orderplz_01.coffee.service;
 
-
-import com.back.orderplz_01.coffee.dto.CoffeeDetailResponse;
+import com.back.orderplz_01.coffee.dto.CoffeeResponseDto;
+import com.back.orderplz_01.coffee.dto.CoffeeUpdateRequestDto;
 import com.back.orderplz_01.coffee.entity.Coffee;
 import com.back.orderplz_01.coffee.repository.CoffeeRepository;
 import jakarta.persistence.EntityNotFoundException;
-import com.back.orderplz_01.coffee.dto.CoffeeResponseDto;
-import com.back.orderplz_01.coffee.dto.CoffeeUpdateRequestDto;
+import com.back.orderplz_01.coffee.dto.CoffeeDetailDto;
 import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -17,6 +17,7 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class CoffeeService {
+
     private final CoffeeRepository coffeeRepository;
 
     @Transactional(readOnly = true)
@@ -27,10 +28,19 @@ public class CoffeeService {
                 .toList();
     }
 
+    public CoffeeDetailDto getCoffeeDetail(Long id) {
+        Coffee coffee = coffeeRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException( id+"번 원두는 존재하지 않습니다."));
+
+        return new CoffeeDetailDto(
+                coffee.getName(),
+                coffee.getDescription(),
+                coffee.getPrice(),
+                coffee.getQuantity()
+        );
+    }
 
 
-
-    //own-02에서 사용
     @Transactional(readOnly = true)
     public CoffeeResponseDto findById(Long id) {
         Coffee coffee = coffeeRepository.findById(id)
@@ -38,16 +48,6 @@ public class CoffeeService {
         return CoffeeResponseDto.from(coffee);
     }
 
-    //cus-02에서 사용
-    @Transactional(readOnly = true)
-    public CoffeeDetailResponse getCoffeeDetail(Long id) {
-        Coffee coffee = coffeeRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException(id+"번 원두는 존재하지 않습니다."));
-
-        return CoffeeDetailResponse.from(coffee);
-    }
-
-    //own-02에서 사용
     @Transactional
     public CoffeeResponseDto update(Long id, CoffeeUpdateRequestDto requestDto) {
         Coffee coffee = coffeeRepository.findById(id)
