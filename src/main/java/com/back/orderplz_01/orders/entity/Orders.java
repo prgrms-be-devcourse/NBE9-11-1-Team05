@@ -50,4 +50,8 @@ public class Orders extends BaseEntity {
 	@JoinColumn(name = "coffee_id", nullable = false)
 	private Coffee coffee;
 
+	public void addQuantityAndAmount(Long quantity, Long amount) {
+		this.quantity += quantity;
+		this.totalAmount += amount;
+	}
 }

@@ -26,7 +26,12 @@ public class Coffee extends BaseEntity {
 	@Column(nullable = false)
 	private Long quantity;
 
-
+	public void decreaseQuantity(Long quantity) {
+		if (this.quantity < quantity) {
+			throw new IllegalArgumentException("재고가 부족합니다.");
+		}
+		this.quantity -= quantity;
+	}
 
 	public void update(String name, String description, Long price, Long quantity) {
 		this.name = name;

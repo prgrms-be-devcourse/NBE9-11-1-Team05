@@ -5,6 +5,9 @@ import com.back.orderplz_01.coffee.dto.CoffeeUpdateRequestDto;
 import com.back.orderplz_01.coffee.entity.Coffee;
 import com.back.orderplz_01.coffee.repository.CoffeeRepository;
 import jakarta.persistence.EntityNotFoundException;
+import com.back.orderplz_01.coffee.dto.CoffeeDetailDto;
+import org.springframework.stereotype.Service;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,6 +27,19 @@ public class CoffeeService {
                 .map(CoffeeResponseDto::from)
                 .toList();
     }
+
+    public CoffeeDetailDto getCoffeeDetail(Long id) {
+        Coffee coffee = coffeeRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException( id+"번 원두는 존재하지 않습니다."));
+
+        return new CoffeeDetailDto(
+                coffee.getName(),
+                coffee.getDescription(),
+                coffee.getPrice(),
+                coffee.getQuantity()
+        );
+    }
+
 
     @Transactional(readOnly = true)
     public CoffeeResponseDto findById(Long id) {
@@ -47,4 +63,5 @@ public class CoffeeService {
 
         return CoffeeResponseDto.from(coffee);
     }
+
 }
