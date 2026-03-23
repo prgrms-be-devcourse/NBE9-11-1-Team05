@@ -21,6 +21,12 @@ import java.time.LocalDateTime;
 public class BaseInitData {
 
     @Autowired
+    private CoffeeRepository coffeeRepository;
+
+    @Autowired
+    private OrdersRepository ordersRepository;
+
+    @Autowired
     @Lazy
     private BaseInitData self;
 
@@ -34,5 +40,26 @@ public class BaseInitData {
     @Transactional
     public void work1() {
 
+        Coffee coffee = new Coffee(
+                "콜롬비아 원두",
+                "고소한 맛",
+                1000L,
+                10L
+        );
+
+        coffeeRepository.save(coffee);
+
+        Orders order = new Orders(
+                "test@naver.com",
+                "서울시 마포구",
+                "03511",
+                LocalDateTime.now(),
+                10000L,
+                1L,
+                OrderStatus.PROCESSING,
+                coffee
+        );
+
+        ordersRepository.save(order);
     }
 }
