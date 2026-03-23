@@ -50,6 +50,9 @@ public class OrdersService {
 					coffee
 				);
 				ordersRepository.save(newOrder);
+
+				// 커피 재고 차감
+				coffee.decreaseQuantity(orderItem.quantity());
 			});
 		}
 
