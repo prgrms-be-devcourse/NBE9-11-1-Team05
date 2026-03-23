@@ -35,27 +35,21 @@ public class BaseInitData {
                 "에티오피아 예가체프",
                 "꽃향과 산미가 특징인 원두입니다.",
                 18000L,
-                12L,
-                "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085",
-                false
+                12L
         ));
 
         coffeeRepository.save(new Coffee(
                 "콜롬비아 수프리모",
                 "고소하고 밸런스가 좋은 원두입니다.",
                 16000L,
-                8L,
-                "https://images.unsplash.com/photo-1509042239860-f550ce710b93",
-                false
+                8L
         ));
 
         coffeeRepository.save(new Coffee(
                 "브라질 산토스",
                 "부드럽고 견과류 향이 나는 원두입니다.",
                 15000L,
-                0L,
-                "https://images.unsplash.com/photo-1447933601403-0c6688de566e",
-                true
+                0L
         ));
     }
 }

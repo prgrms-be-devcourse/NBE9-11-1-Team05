@@ -41,8 +41,8 @@ public class CoffeeService {
                 requestDto.name(),
                 requestDto.description(),
                 requestDto.price(),
-                requestDto.quantity(),
-                requestDto.imageUrl()
+                requestDto.quantity()
+
         );
 
         return CoffeeResponseDto.from(coffee);

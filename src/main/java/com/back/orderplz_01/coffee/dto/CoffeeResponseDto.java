@@ -7,9 +7,8 @@ public record CoffeeResponseDto(
         String name,
         String description,
         Long price,
-        Long quantity,
-        String imageUrl,
-        boolean soldOut
+        Long quantity
+
 ) {
     public static CoffeeResponseDto from(Coffee coffee) {
         return new CoffeeResponseDto(
@@ -17,9 +16,8 @@ public record CoffeeResponseDto(
                 coffee.getName(),
                 coffee.getDescription(),
                 coffee.getPrice(),
-                coffee.getQuantity(),
-                coffee.getImageUrl(),
-                coffee.isSoldOut()
+                coffee.getQuantity()
+
         );
     }
 }

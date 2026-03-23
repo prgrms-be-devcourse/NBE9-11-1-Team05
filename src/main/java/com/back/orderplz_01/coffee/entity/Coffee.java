@@ -26,19 +26,14 @@ public class Coffee extends BaseEntity {
 	@Column(nullable = false)
 	private Long quantity;
 
-	@Column(nullable = false)
-	private String imageUrl;
 
-	@Column(nullable = false)
-	private boolean soldOut;
 
-	public void update(String name, String description, Long price, Long quantity, String imageUrl) {
+	public void update(String name, String description, Long price, Long quantity) {
 		this.name = name;
 		this.description = description;
 		this.price = price;
 		this.quantity = quantity;
-		this.imageUrl = imageUrl;
-		this.soldOut = (quantity == null || quantity <= 0);
+
 	}
 
 }

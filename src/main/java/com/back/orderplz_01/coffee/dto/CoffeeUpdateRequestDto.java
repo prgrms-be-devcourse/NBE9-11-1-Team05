@@ -17,9 +17,8 @@ public record CoffeeUpdateRequestDto(
 
         @NotNull(message = "원두 수량은 필수입니다.")
         @Min(value = 0, message = "원두 수량은 0 이상이어야 합니다.")
-        Long quantity,
+        Long quantity
 
-        @NotBlank(message = "이미지 URL은 필수입니다.")
-        String imageUrl
+
 ) {
 }
