@@ -2,6 +2,9 @@ package com.back.orderplz_01.global.initData;
 
 import com.back.orderplz_01.coffee.entity.Coffee;
 import com.back.orderplz_01.coffee.repository.CoffeeRepository;
+import com.back.orderplz_01.orders.entity.OrderStatus;
+import com.back.orderplz_01.orders.entity.Orders;
+import com.back.orderplz_01.orders.repository.OrdersRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.context.annotation.Bean;
@@ -10,6 +13,9 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
+
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 
 @Configuration
 @RequiredArgsConstructor
@@ -22,11 +28,15 @@ public class BaseInitData {
     @Autowired
     private CoffeeRepository coffeeRepository;
 
+    @Autowired
+    private OrdersRepository ordersRepository;
+
     @Bean
     //work1 실행하기.
     public ApplicationRunner initData() {
         return args -> {
             self.coffee_name();
+            orderStatusTest();
         };
     }
 
@@ -47,6 +57,25 @@ public class BaseInitData {
                     "화산 지대 특유의 쌉싸름하고 스모키한 향미에 캐러멜 같은 부드러운 단맛이 어우러져 깊은 여운을 남깁니다.",
                     6500L, 60L));
         }
+    }
 
+    @Transactional
+    public void orderStatusTest() {
+
+        Orders order = new Orders(
+                "test@naver.com",
+                "서울시 마포구",
+                "03511",
+                LocalDateTime.now(),
+                10000L,
+                OrderStatus.PROCESSING,
+                new ArrayList<>()
+        );
+
+        ordersRepository.save(order);
+
+        // 상태 변경 테스트
+        order.changeStatus(OrderStatus.SHIPPED);
+        order.changeStatus(OrderStatus.DELIVERED);
     }
 }

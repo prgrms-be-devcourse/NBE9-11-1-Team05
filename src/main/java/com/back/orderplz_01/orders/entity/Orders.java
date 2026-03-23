@@ -47,8 +47,24 @@ public class Orders extends BaseEntity {
 	@OneToMany(mappedBy = "orders", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
 	private List<OrdersItem> orderItems = new ArrayList<>();
 
-	// public void addQuantityAndAmount(Long quantity, Long amount) {
-	// 	this.quantity += quantity;
-	// 	this.totalAmount += amount;
-	// }
+	// 배송 상태 변경
+	public void changeStatus(OrderStatus newStatus) {
+
+		if (this.orderStatus == OrderStatus.PROCESSING && newStatus == OrderStatus.SHIPPED) {
+			this.orderStatus = newStatus;
+			return;
+		}
+
+		if (this.orderStatus == OrderStatus.SHIPPED && newStatus == OrderStatus.DELIVERED) {
+			this.orderStatus = newStatus;
+			return;
+		}
+
+		if (this.orderStatus == OrderStatus.DELIVERED) {
+			throw new IllegalStateException("배송 완료된 주문입니다.");
+		}
+
+		throw new IllegalStateException("잘못된 상태 변경입니다.");
+	}
+
 }
