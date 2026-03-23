@@ -1,4 +1,4 @@
-package com.back.orderplz_01.ownerorders.dto;
+package com.back.orderplz_01.search.ownersearch.dto;
 
 import java.time.LocalDateTime;
 
@@ -9,14 +9,11 @@ import com.back.orderplz_01.orders.entity.Orders;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
-/**
- * 업주(Owner) 화면용 주문 목록 항목. 영속 모델 {@link Orders}를 기준으로 조립합니다.
- */
 @Getter
 @AllArgsConstructor
 public class OwnerOrderSummaryDto {
 
-	private Long id;
+	private Integer id;
 
 	private String email;
 

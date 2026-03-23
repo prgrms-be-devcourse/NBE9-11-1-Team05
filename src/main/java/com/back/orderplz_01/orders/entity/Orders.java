@@ -44,9 +44,10 @@ public class Orders extends BaseEntity {
 
 	@Enumerated(EnumType.STRING)
 	@Column(nullable = false)
-	private OrderStatus orderStatus;
+	OrderStatus orderStatus;
 
 	@ManyToOne
 	@JoinColumn(name = "coffee_id", nullable = false)
 	private Coffee coffee;
+
 }

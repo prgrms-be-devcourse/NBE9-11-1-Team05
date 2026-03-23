@@ -1,12 +1,13 @@
-package com.back.orderplz_01.orders.dto;
+package com.back.orderplz_01.search.customersearch.dto;
 
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 
 import com.back.orderplz_01.coffee.entity.Coffee;
-import com.back.orderplz_01.orders.entity.Orders;
 import com.back.orderplz_01.orders.entity.OrderStatus;
+import com.back.orderplz_01.orders.entity.Orders;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -14,7 +15,7 @@ import lombok.Getter;
 @AllArgsConstructor
 public class OrdersDetailDto {
 
-	private Long id;
+	private Integer id;
 
 	private String email;
 
@@ -30,24 +31,7 @@ public class OrdersDetailDto {
 
 	private List<OrdersItemDto> items;
 
-
 	public static OrdersDetailDto from(Orders orders) {
-		Coffee coffee = orders.getCoffee();
-
-		Long coffeeId = coffee == null ? null : coffee.getId();
-		Long unitPrice = coffee == null ? null : coffee.getPrice();
-		Long quantity = orders.getQuantity();
-
-		Long lineTotal = (unitPrice == null || quantity == null) ? null : unitPrice * quantity;
-
-		OrdersItemDto item = new OrdersItemDto(
-			coffeeId,
-			coffee == null ? null : coffee.getName(),
-			quantity,
-			unitPrice,
-			lineTotal
-		);
-
 		return new OrdersDetailDto(
 			orders.getId(),
 			orders.getEmail(),
@@ -56,7 +40,23 @@ public class OrdersDetailDto {
 			orders.getOrderedAt(),
 			orders.getTotalAmount(),
 			orders.getOrderStatus(),
-			Collections.singletonList(item)
+			Collections.singletonList(toLineItem(orders))
+		);
+	}
+
+	private static OrdersItemDto toLineItem(Orders orders) {
+		Coffee coffee = orders.getCoffee();
+		Integer coffeeId = coffee == null ? null : coffee.getId();
+		Long unitPrice = coffee == null ? null : coffee.getPrice();
+		Long quantity = orders.getQuantity();
+		Long lineTotal = (unitPrice == null || quantity == null) ? null : unitPrice * quantity;
+
+		return new OrdersItemDto(
+			coffeeId,
+			coffee == null ? null : coffee.getName(),
+			quantity,
+			unitPrice,
+			lineTotal
 		);
 	}
 
@@ -64,7 +64,7 @@ public class OrdersDetailDto {
 	@AllArgsConstructor
 	public static class OrdersItemDto {
 
-		private Long coffeeId;
+		private Integer coffeeId;
 
 		private String coffeeName;
 
@@ -75,4 +75,3 @@ public class OrdersDetailDto {
 		private Long lineTotal;
 	}
 }
-
