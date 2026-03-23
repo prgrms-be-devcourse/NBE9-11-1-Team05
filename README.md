@@ -25,7 +25,7 @@
 
 | 구분 | 패키지 | 설명 |
 |------|--------|------|
-| 고객 조회 API | `com.back.orderplz_01.search.customersearch` | CUS-09, CUS-10 |
+| 고객 조회 API | `com.back.orderplz_01.search.customersearch` | CUS-09(이메일+우편번호 필수), CUS-10 |
 | 업주 조회 API | `com.back.orderplz_01.search.ownersearch` | OWN-09 |
 | 주문 도메인(원본) | `com.back.orderplz_01.orders` | 엔티티·`OrdersRepository` 스켈레톤 등 |
 
@@ -107,45 +107,24 @@ Host: localhost:8080
 
 ---
 
-### CUS-09 · 이메일만 — 주문 요약 목록
-
-| 항목 | 값 |
-|------|-----|
-| Method | `GET` |
-| Path | `/api/orders/by-email` |
-| Query (필수) | `email` (이메일 형식) |
-
-**응답 `200 OK`**
-
-- Body: `OrdersSummaryDto[]` (배열 직접). 없으면 `[]`.
-
-**`OrdersSummaryDto`**
-
-| 필드 | 타입 |
-|------|------|
-| `id` | number |
-| `email` | string |
-| `orderedAt` | string (ISO-8601) |
-| `totalAmount` | number |
-| `quantity` | number |
-| `orderStatus` | string |
-
-검증 실패 시 `400` (잘못된 이메일 등).
-
----
-
-### CUS-09 · 이메일 + 우편번호 — 주문 내역
+### CUS-09 · 이메일 + 우편번호(둘 다 필수) — 접수 주문 여부·내역
 
 | 항목 | 값 |
 |------|-----|
 | Method | `GET` |
 | Path | `/api/orders/history` (권장) |
 | Alias | `/api/orders/by-email-and-zip` |
-| Query (필수) | `email`, `zipCode` (최대 20자) |
+| Query (**둘 다 필수**) | `email` (이메일 형식), `zipCode` (최대 20자) |
+
+**동작**
+
+- 입력한 **이메일·우편번호가 모두 일치하는** 접수 주문(행)만 조회합니다. 이메일만으로는 조회하지 않습니다.
 
 **응답 `200 OK`**
 
-- Body: `OrdersDetailDto[]`. 없으면 `[]`.
+- Body: `OrdersDetailDto[]`. 조건에 맞는 주문이 없으면 `[]`.
+
+검증 실패 시 `400` (이메일 형식·빈 `zipCode` 등).
 
 **예시**
 
@@ -221,17 +200,11 @@ Host: localhost:8080
 - URL: `{{BASE_URL}}/api/owner/orders`
 - Params (선택): `page` (기본 `0`), `size` (기본 `20`), `sort` (선택). 응답은 **배열이 아니라 `Page` JSON**이므로 목록은 **`content`** 필드에서 꺼내 씁니다.
 
-### 1) CUS-09 · 이메일만
-
-- Method: `GET`
-- URL: `{{BASE_URL}}/api/orders/by-email`
-- Params: `email`
-
-### 2) CUS-09 · 이메일 + 우편번호
+### 1) CUS-09 · 이메일 + 우편번호 (둘 다 필수)
 
 - Method: `GET`
 - URL: `{{BASE_URL}}/api/orders/history`
-- Params: `email`, `zipCode`
+- Params: `email`, `zipCode` (누구 하나라도 빠지면 `400`)
 
 Alias: `{{BASE_URL}}/api/orders/by-email-and-zip` (동일 Params)
 
@@ -241,7 +214,7 @@ Alias: `{{BASE_URL}}/api/orders/by-email-and-zip` (동일 Params)
 http://localhost:8080/api/orders/history?email=user@example.com&zipCode=12345
 ```
 
-### 3) CUS-10 · 주문 1건 상세
+### 2) CUS-10 · 주문 1건 상세
 
 - Method: `GET`
 - URL: `{{BASE_URL}}/api/orders/{ordersId}`

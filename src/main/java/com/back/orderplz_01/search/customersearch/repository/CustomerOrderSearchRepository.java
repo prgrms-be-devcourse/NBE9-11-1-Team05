@@ -17,15 +17,6 @@ public class CustomerOrderSearchRepository {
 	@PersistenceContext
 	private EntityManager em;
 
-	public List<Orders> findByEmailIgnoreCaseOrderByOrderedAtDesc(String email) {
-		TypedQuery<Orders> q = em.createQuery(
-			"SELECT o FROM Orders o JOIN FETCH o.coffee WHERE LOWER(o.email) = LOWER(:email) ORDER BY o.orderedAt DESC",
-			Orders.class
-		);
-		q.setParameter("email", email);
-		return q.getResultList();
-	}
-
 	public List<Orders> findByEmailIgnoreCaseAndZipCodeIgnoreCaseOrderByOrderedAtDesc(String email, String zipCode) {
 		TypedQuery<Orders> q = em.createQuery(
 			"""

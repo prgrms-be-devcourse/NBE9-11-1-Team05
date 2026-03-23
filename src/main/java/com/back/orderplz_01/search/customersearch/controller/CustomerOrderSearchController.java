@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.back.orderplz_01.search.customersearch.dto.OrdersDetailDto;
-import com.back.orderplz_01.search.customersearch.dto.OrdersSummaryDto;
 import com.back.orderplz_01.search.customersearch.service.CustomerOrderSearchService;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -22,18 +21,11 @@ import lombok.RequiredArgsConstructor;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/orders")
-@Tag(name = "CustomerOrderSearch", description = "고객 주문 조회 (CUS-09, CUS-10)")
+@Tag(name = "CustomerOrderSearch", description = "고객 주문 조회 — CUS-09: 이메일+우편번호 필수")
 @Validated
 public class CustomerOrderSearchController {
 
 	private final CustomerOrderSearchService customerOrderSearchService;
-
-	@GetMapping("/by-email")
-	public List<OrdersSummaryDto> getOrdersByEmail(
-		@RequestParam @Email @NotBlank String email
-	) {
-		return customerOrderSearchService.findByEmail(email);
-	}
 
 	@GetMapping({ "/history", "/by-email-and-zip" })
 	public List<OrdersDetailDto> getOrdersHistory(

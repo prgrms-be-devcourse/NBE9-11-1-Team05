@@ -9,7 +9,6 @@ import org.springframework.web.server.ResponseStatusException;
 
 import com.back.orderplz_01.orders.entity.Orders;
 import com.back.orderplz_01.search.customersearch.dto.OrdersDetailDto;
-import com.back.orderplz_01.search.customersearch.dto.OrdersSummaryDto;
 import com.back.orderplz_01.search.customersearch.repository.CustomerOrderSearchRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -19,13 +18,6 @@ import lombok.RequiredArgsConstructor;
 public class CustomerOrderSearchService {
 
 	private final CustomerOrderSearchRepository customerOrderSearchRepository;
-
-	@Transactional(readOnly = true)
-	public List<OrdersSummaryDto> findByEmail(String email) {
-		return customerOrderSearchRepository.findByEmailIgnoreCaseOrderByOrderedAtDesc(email).stream()
-			.map(OrdersSummaryDto::from)
-			.toList();
-	}
 
 	@Transactional(readOnly = true)
 	public List<OrdersDetailDto> findDetailsByEmailAndZipCode(String email, String zipCode) {
