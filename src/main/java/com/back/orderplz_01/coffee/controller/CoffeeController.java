@@ -12,7 +12,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/coffees")
+@RequestMapping("/coffees")
 @Tag(name = "CoffeeController", description = "커피 API")
 public class CoffeeController {
 
@@ -28,7 +28,7 @@ public class CoffeeController {
         return coffeeService.findById(id);
     }
 
-    @PutMapping("/{id}")
+    @PatchMapping("/{id}")
     public CoffeeResponseDto update(
             @PathVariable Long id,
             @Valid @RequestBody CoffeeUpdateRequestDto requestDto
