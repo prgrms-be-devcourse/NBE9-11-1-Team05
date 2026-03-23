@@ -1,8 +1,9 @@
 package com.back.orderplz_01.orders.controller;
 
-import com.back.orderplz_01.orders.dto.OrderStatusUpdateRequest;
+import com.back.orderplz_01.orders.dto.OrderStatusChangeRequest;
 import com.back.orderplz_01.orders.service.OrdersService;
 import io.swagger.v3.oas.annotations.Operation;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,7 +28,7 @@ public class OrdersController {
     public ResponseEntity<Void> changeStatus(
             @Parameter(description = "주문 ID")
             @PathVariable Long id,
-            @RequestBody OrderStatusUpdateRequest request
+            @RequestBody @Valid OrderStatusChangeRequest request
             ){
         ordersService.changeStatus(id, request.getStatus());
         return ResponseEntity.ok().build();
