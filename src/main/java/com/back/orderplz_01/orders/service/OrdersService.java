@@ -14,10 +14,12 @@ import com.back.orderplz_01.coffee.repository.CoffeeRepository;
 import com.back.orderplz_01.global.apiRes.ApiRes;
 import com.back.orderplz_01.orders.dto.request.CoffeeOrderList;
 import com.back.orderplz_01.orders.dto.request.CoffeeOrderReq;
+import com.back.orderplz_01.orders.dto.res.OrdersDetailRes;
 import com.back.orderplz_01.orders.entity.OrderStatus;
 import com.back.orderplz_01.orders.entity.Orders;
 import com.back.orderplz_01.orders.repository.OrdersRepository;
 
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -26,6 +28,13 @@ public class OrdersService {
 
 	private final OrdersRepository ordersRepository;
 	private final CoffeeRepository coffeeRepository;
+
+	public OrdersDetailRes ordersDetail(Long ordersId) {
+		Orders orders = ordersRepository.findById(ordersId)
+			.orElseThrow(() -> new EntityNotFoundException("존재하지 않는 주문입니다."));
+
+		return OrdersDetailRes.from(orders);
+	}
 
 	public ResponseEntity<ApiRes<Void>> pay(CoffeeOrderReq req) {
 		// 커피 재고 여부 확인
