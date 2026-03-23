@@ -12,9 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.back.orderplz_01.orders.dto.OrderSearchDto;
 import com.back.orderplz_01.orders.entity.Orders;
 import com.back.orderplz_01.orders.entity.OrdersItem;
-import com.back.orderplz_01.orders.entity.OrderStatus;
-
-import jakarta.persistence.EntityManager;
+import com.back.orderplz_01.orders.repository.OrdersSearchRepository;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -25,7 +23,7 @@ public class OrderSearchService {
 	private static final Pattern EMAIL_PATTERN = Pattern.compile("^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$");
 	private static final String MSG_NO_ORDERS = "주문한 상품이 없습니다";
 
-	private final EntityManager entityManager;
+	private final OrdersSearchRepository ordersSearchRepository;
 
 	public OrderSearchDto.Response search(OrderSearchDto.Request request) {
 		validate(request);
@@ -34,22 +32,7 @@ public class OrderSearchService {
 		String address = request.getAddress().trim();
 		String zipCode = request.getZipCode().trim();
 
-		List<Orders> found = entityManager.createQuery(
-				"""
-				SELECT DISTINCT o
-				FROM Orders o
-				LEFT JOIN FETCH o.orderItems oi
-				LEFT JOIN FETCH oi.coffee
-				WHERE o.email = :email
-				  AND o.address = :address
-				  AND o.zipCode = :zipCode
-				ORDER BY o.createDate DESC
-				""",
-				Orders.class
-		).setParameter("email", email)
-				.setParameter("address", address)
-				.setParameter("zipCode", zipCode)
-				.getResultList();
+		List<Orders> found = ordersSearchRepository.findOrdersForList(email, address, zipCode);
 
 		if (found.isEmpty()) {
 			return new OrderSearchDto.Response(MSG_NO_ORDERS, List.of());
@@ -90,20 +73,10 @@ public class OrderSearchService {
 
 	private OrderSearchDto.OrderSummary toSummary(Orders order) {
 		List<OrderSearchDto.LineItem> lines = order.getOrderItems() == null ? List.of()
-				: order.getOrderItems().stream()
-					.filter(Objects::nonNull)
-					.map(this::toLine)
-					.collect(Collectors.toList());
+				: order.getOrderItems().stream().filter(Objects::nonNull).map(this::toLine).collect(Collectors.toList());
 
-		return new OrderSearchDto.OrderSummary(
-				order.getId(),
-				order.getCreateDate(),
-				order.getOrderStatus(),
-				lines,
-				order.getAddress(),
-				order.getZipCode(),
-				order.getTotalAmount()
-		);
+		return new OrderSearchDto.OrderSummary(order.getId(), order.getCreateDate(), order.getOrderStatus(), lines,
+				order.getAddress(), order.getZipCode(), order.getTotalAmount());
 	}
 
 	private OrderSearchDto.LineItem toLine(OrdersItem item) {
