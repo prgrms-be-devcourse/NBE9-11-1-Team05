@@ -34,11 +34,17 @@ public class BaseInitData {
     public ApplicationRunner initData() {
         return args -> {
             self.work1();
+            self.coffeeStatusTest();
         };
     }
 
     @Transactional
     public void work1() {
+
+    }
+
+    @Transactional
+    public void coffeeStatusTest() {
 
         Coffee coffee = new Coffee(
                 "콜롬비아 원두",
