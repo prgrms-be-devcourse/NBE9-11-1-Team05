@@ -232,20 +232,12 @@ public class OrdersService {
 			Sort.by(Sort.Direction.DESC, "orderedAt")
 		);
 
-		List<OrdersOwnerSearchItem> orderList = new ArrayList<>(found.size());
-		for (Orders order : found) {
-			orderList.add(toOrdersOwnerSearchItem(order));
-		}
+		// OWN-09 OrdersOwnerSearchItem 리스트로 변환
+		// 주문번호, 이메일, 주문일시, 총금액 반환
+		List<OrdersOwnerSearchItem> orderList = found.stream()
+			.map(OrdersOwnerSearchItem::from)
+			.toList();
 
 		return new OrdersOwnerSearch(orderList);
-	}
-
-	/* OWN-09 주문 한 건 (주문번호, 이메일, 주문일시, 총금액) */
-	private OrdersOwnerSearchItem toOrdersOwnerSearchItem(Orders order) {
-		return new OrdersOwnerSearchItem(
-				order.getId(),
-				order.getEmail(),
-				order.getOrderedAt(),
-				order.getTotalAmount());
 	}
 }
