@@ -13,10 +13,10 @@ public class SpringDoc {
 
     // 1. 고객용 API 그룹 설정
     @Bean
-    public GroupedOpenApi customerApi() {
+    public GroupedOpenApi coffeesApi() {
         return GroupedOpenApi.builder()
-                .group("고객용 API") // 우측 상단 선택창에 보여질 이름
-                .pathsToMatch("/api/coffees/**")       // 이 그룹에 묶어줄 API 주소 패턴 (컨트롤러 주소에 맞춤)
+                .group("원두 API") // 우측 상단 선택창에 보여질 이름
+                .pathsToMatch("/coffees/**")       // 이 그룹에 묶어줄 API 주소 패턴 (컨트롤러 주소에 맞춤)
                 .build();
     }
 
@@ -24,7 +24,7 @@ public class SpringDoc {
     @Bean
     public GroupedOpenApi ownerApi() {
         return GroupedOpenApi.builder()
-                .group("업주용 API")
+                .group("주문용 API")
                 .pathsToMatch("/orders/**")
                 .build();
     }
