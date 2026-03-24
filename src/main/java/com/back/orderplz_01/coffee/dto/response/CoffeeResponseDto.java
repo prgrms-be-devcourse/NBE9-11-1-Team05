@@ -1,19 +1,23 @@
-package com.back.orderplz_01.coffee.dto;
+package com.back.orderplz_01.coffee.dto.response;
 
 import com.back.orderplz_01.coffee.entity.Coffee;
 
-public record CoffeeDetailResponse(
+public record CoffeeResponseDto(
+        Long id,
         String name,
         String description,
         Long price,
         Long quantity
-){
-    public static CoffeeDetailResponse from(Coffee coffee) {
-        return new CoffeeDetailResponse(
+
+) {
+    public static CoffeeResponseDto from(Coffee coffee) {
+        return new CoffeeResponseDto(
+                coffee.getId(),
                 coffee.getName(),
                 coffee.getDescription(),
                 coffee.getPrice(),
                 coffee.getQuantity()
+
         );
     }
 }
