@@ -1,10 +1,7 @@
 package com.back.orderplz_01.global.initData;
 
-import com.back.orderplz_01.coffee.entity.Coffee;
-import com.back.orderplz_01.coffee.repository.CoffeeRepository;
-import com.back.orderplz_01.orders.entity.OrderStatus;
-import com.back.orderplz_01.orders.entity.Orders;
-import com.back.orderplz_01.orders.repository.OrdersRepository;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.context.annotation.Bean;
@@ -12,70 +9,102 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.transaction.annotation.Transactional;
 
-import lombok.RequiredArgsConstructor;
+import com.back.orderplz_01.coffee.entity.Coffee;
+import com.back.orderplz_01.coffee.repository.CoffeeRepository;
+import com.back.orderplz_01.orders.entity.Orders;
+import com.back.orderplz_01.orders.repository.OrdersRepository;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Configuration
 @RequiredArgsConstructor
+@Slf4j
 public class BaseInitData {
 
-    @Autowired
-    @Lazy
-    private BaseInitData self;
+	@Autowired
+	@Lazy
+	private BaseInitData self;
 
-    @Autowired
-    private CoffeeRepository coffeeRepository;
+	@Autowired
+	private CoffeeRepository coffeeRepository;
 
-    @Autowired
-    private OrdersRepository ordersRepository;
+	@Autowired
+	private OrdersRepository ordersRepository;
 
-    @Bean
-    //work1 실행하기.
-    public ApplicationRunner initData() {
-        return args -> {
-            self.coffee_name();
-            orderStatusTest();
-        };
-    }
+	@Bean
+	//work1 실행하기.
+	public ApplicationRunner initData() {
+		return args -> {
+			self.initCoffees();
+			self.initOrders();
+		};
+	}
 
-    @Transactional
-    //실행되면 DB에 테스트 데이터 삽입.
-    public void coffee_name() {
-        if (coffeeRepository.count() == 0) {
-            coffeeRepository.save(new Coffee("에티오피아 예가체프",
-                    "은은한 자스민 꽃향기와 오렌지 톤의 기분 좋은 산미가 깔끔하게 떨어지는 매력적인 스페셜티입니다.",
-                    6500L, 100L));
-            coffeeRepository.save(new Coffee("콜롬비아 수프리모",
-                    "구운 견과류의 고소함과 짙은 다크 초콜릿의 묵직한 단맛이 훌륭한 밸런스를 이루는 마일드 커피입니다.",
-                    6000L, 50L));
-            coffeeRepository.save(new Coffee("케냐 AA",
-                    "아프리카의 강렬한 태양을 담은 듯 묵직한 바디감과 자몽, 블랙베리가 연상되는 오묘하고 풍부한 과일 향이 일품입니다.",
-                    7000L, 80L));
-            coffeeRepository.save(new Coffee("과테말라 안티구아",
-                    "화산 지대 특유의 쌉싸름하고 스모키한 향미에 캐러멜 같은 부드러운 단맛이 어우러져 깊은 여운을 남깁니다.",
-                    6500L, 60L));
-        }
-    }
+	// 커피 재고 등록
+	@Transactional
+	public void initCoffees() {
+		// 정상 재고 커피 (일반 주문 / 묶음 배송 테스트용)
+		if (coffeeRepository.count() == 0) {
+			Coffee ethiopia = Coffee.create(
+				"에티오피아 예가체프",
+				"과일향이 풍부한 워시드 원두",
+				15000L,
+				100L
+			);
 
-    @Transactional
-    public void orderStatusTest() {
+			Coffee brazil = Coffee.create(
+				"브라질 산토스",
+				"고소하고 부드러운 내추럴 원두",
+				12000L,
+				50L
+			);
 
-        Orders order = new Orders(
-                "test@naver.com",
-                "서울시 마포구",
-                "03511",
-                LocalDateTime.now(),
-                10000L,
-                OrderStatus.PROCESSING,
-                new ArrayList<>()
-        );
+			Coffee colombia = Coffee.create(
+				"콜롬비아 수프리모",
+				"재고 부족 테스트용",
+				13000L,
+				1L
+			);
 
-        ordersRepository.save(order);
+			Coffee guatemala = Coffee.create(
+				"과테말라 안티구아",
+				"쌉싸름하고 스모키한 원두",
+				12000L,
+				50L
+			);
 
-        // 상태 변경 테스트
-        order.changeStatus(OrderStatus.SHIPPED);
-        order.changeStatus(OrderStatus.DELIVERED);
-    }
+			coffeeRepository.saveAll(List.of(ethiopia, brazil, colombia, guatemala));
+
+			log.info("=== 커피 등록 완료 ===");
+		}
+	}
+
+	// ── 2. 묶음 배송 테스트용 기존 주문 등록 ──────────────────────
+	// 오후 2시 이전에 앱을 실행해야 묶음 배송 로직이 동작합니다.
+	// 전날 오후 2시 ~ 오늘 오후 2시 사이의 PROCESSING 주문을 넣어둡니다.
+	@Transactional
+	public void initOrders() {
+		if (ordersRepository.count() == 0) {
+			Coffee ethiopia = coffeeRepository.findAll().stream()
+				.filter(c -> c.getName().equals("에티오피아 예가체프"))
+				.findFirst()
+				.orElseThrow();
+
+			// 묶음 배송 대상이 될 기존 주문
+			// - 동일한 email / address / zipCode 로 새 주문이 들어오면 묶임
+			Orders existingOrder = Orders.create(
+				"test@example.com",
+				"서울시 강남구 테헤란로 1길",
+				"06234"
+			);
+
+			existingOrder.addOrderItem(2L, ethiopia.getPrice(), ethiopia);
+			ethiopia.decreaseQuantity(2L); // 재고도 함께 차감
+
+			ordersRepository.save(existingOrder);
+
+			log.info("=== 묶음 배송 대상 주문 등록 완료 ===");
+		}
+	}
 }
