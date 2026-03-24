@@ -1,7 +1,6 @@
 package com.back.orderplz_01.orders.controller;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -33,15 +32,16 @@ public class OrdersController {
 	private final OrdersService ordersService;
 
 	@PostMapping
-	@Operation(summary = "원두 결제하기")
-	@Transactional
+	@Operation(summary = "원두 결제")
 	public ResponseEntity<ApiRes<Void>> pay(@RequestBody @Valid CoffeeOrderReq req) {
-		return ordersService.pay(req);
+		ordersService.pay(req);
+		return ResponseEntity.ok(new ApiRes<>("원두 주문이 완료되었습니다.", null));
 	}
 
 	@GetMapping("/{ordersId}")
-	public OrdersDetailRes ordersDetail(@PathVariable Long ordersId) {
-		return ordersService.ordersDetail(ordersId);
+	@Operation(summary = "주문 상세 내역 조회")
+	public ResponseEntity<ApiRes<OrdersDetailRes>> ordersDetail(@PathVariable Long ordersId) {
+		return ResponseEntity.ok(new ApiRes<>("주문 상세 조회 완료", ordersService.ordersDetail(ordersId)));
 	}
 
 	/** CUS-09 주문 검색 API */
@@ -56,6 +56,7 @@ public class OrdersController {
 			summary = "주문 상태 변경",
 			description = "PROCESSING → SHIPPED → DELIVERED 순으로 상태 변경"
 	)
+
 	public ResponseEntity<ApiRes<OrdersDetailRes>> changeStatus(
 			@Parameter(description = "주문 ID")
 			@PathVariable Long id,
