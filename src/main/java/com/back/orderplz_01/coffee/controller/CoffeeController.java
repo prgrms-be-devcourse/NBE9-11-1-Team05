@@ -1,11 +1,11 @@
 package com.back.orderplz_01.coffee.controller;
 
-import com.back.orderplz_01.coffee.dto.CoffeeResponseDto;
-import com.back.orderplz_01.coffee.dto.CoffeeUpdateRequestDto;
+import com.back.orderplz_01.coffee.dto.response.CoffeeResponseDto;
+import com.back.orderplz_01.coffee.dto.request.CoffeeUpdateRequestDto;
 import com.back.orderplz_01.coffee.service.CoffeeService;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.web.bind.annotation.*;
-import com.back.orderplz_01.coffee.dto.CoffeeDetailResponse;
+import com.back.orderplz_01.coffee.dto.response.CoffeeDetailResponse;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
