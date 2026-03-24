@@ -43,4 +43,12 @@ public interface OrdersRepository extends JpaRepository<Orders, Long> {
 		@Param("address") String address,
 		@Param("zipCode") String zipCode
 	);
+
+	/** OWN-09 :: 업주 주문관리 - 전체 주문 목록 조회 */
+	@Query("""
+		SELECT o
+		FROM Orders o
+		ORDER BY o.createDate DESC
+		""")
+	List<Orders> findAllProcessingOrdersOrderByCreateDateDesc();
 }

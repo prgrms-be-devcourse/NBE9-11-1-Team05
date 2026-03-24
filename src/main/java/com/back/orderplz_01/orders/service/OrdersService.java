@@ -47,9 +47,9 @@ public class OrdersService {
 	
 	@Transactional(readOnly = true)
 	public OrdersSearchListRes search(OrderSearchRequestDto request) {
-		String email = request.email().trim();
-		String address = request.address().trim();
-		String zipCode = request.zipCode().trim();
+		String email = request.email();
+		String address = request.address();
+		String zipCode = request.zipCode();
 	
 		List<Orders> orders = ordersRepository.findOrdersForList(email, address, zipCode);
 	
