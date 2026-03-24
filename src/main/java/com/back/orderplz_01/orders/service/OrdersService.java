@@ -46,15 +46,15 @@ public class OrdersService {
 
 	// ---------------------------------------------------------------------------
 	// CUS-09 내 주문정보 조회 (이메일 주소 우편번호)
-	
+
 	@Transactional(readOnly = true)
 	public OrdersSearchListRes search(OrderSearchRequestDto request) {
 		String email = request.email();
 		String address = request.address();
 		String zipCode = request.zipCode();
-	
+
 		List<Orders> orders = ordersRepository.findOrdersForList(email, address, zipCode);
-	
+
 		List<OrdersSearchItemRes> orderList = new ArrayList<>(orders.size());
 		for (Orders order : orders) {
 			orderList.add(toOrdersSearchItemRes(order));
@@ -88,6 +88,4 @@ public class OrdersService {
 				item.getQuantity(),
 				item.getPrice());
 	}
-
-	// ---------------------------------------------------------------------------
 }

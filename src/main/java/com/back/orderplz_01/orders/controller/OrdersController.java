@@ -4,9 +4,7 @@ import com.back.orderplz_01.orders.dto.request.OrderSearchRequestDto;
 import com.back.orderplz_01.global.apiRes.ApiRes;
 import com.back.orderplz_01.orders.dto.request.OrderStatusChangeReq;
 import com.back.orderplz_01.orders.dto.res.OrdersDetailRes;
-import com.back.orderplz_01.orders.dto.response.OrdersOwnerRes;
 import com.back.orderplz_01.orders.dto.response.OrdersSearchListRes;
-import com.back.orderplz_01.orders.service.OrderOwnerService;
 import com.back.orderplz_01.orders.service.OrdersService;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -31,14 +29,6 @@ import org.springframework.web.bind.annotation.RestController;
 public class OrdersController {
 
 	private final OrdersService ordersService;
-	private final OrderOwnerService orderOwnerService;
-
-	/** OWN-09 업주 전체 주문 목록 */
-	@GetMapping("/owner/orderlist")
-	@Operation(summary = "업주 전체 주문 목록", description = "주문관리 화면용 전체 주문 조회 (생성일 내림차순)")
-	public OrdersOwnerRes ownerOrdersList() {
-		return orderOwnerService.getAllProcessingOrders();
-	}
 
 	@GetMapping("/{ordersId}")
 	public OrdersDetailRes ordersDetail(@PathVariable Long ordersId) {
