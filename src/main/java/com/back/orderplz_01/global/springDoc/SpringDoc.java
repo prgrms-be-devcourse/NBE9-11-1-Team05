@@ -25,7 +25,7 @@ public class SpringDoc {
     public GroupedOpenApi ownerApi() {
         return GroupedOpenApi.builder()
                 .group("업주용 API")
-                .pathsToMatch("/orders/**")
+                .pathsToMatch("/orders/**", "/coffees/**")
                 .build();
     }
 }
