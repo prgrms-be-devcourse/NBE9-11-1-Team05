@@ -47,7 +47,7 @@ public class Orders extends BaseEntity {
 	@OneToMany(mappedBy = "orders", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
 	private List<OrdersItem> orderItems = new ArrayList<>();
 
-	// 배송 상태 변경
+	// OWN-04 : 배송 상태 변경 흐름 제어
 	public void changeStatus(OrderStatus newStatus) {
 
 		if (this.orderStatus == OrderStatus.PROCESSING && newStatus == OrderStatus.SHIPPED) {
