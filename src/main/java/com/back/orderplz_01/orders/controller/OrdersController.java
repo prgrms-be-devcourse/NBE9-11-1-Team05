@@ -15,7 +15,7 @@ import com.back.orderplz_01.orders.dto.request.CoffeeOrderReq;
 import com.back.orderplz_01.orders.dto.request.OrderSearchRequestDto;
 import com.back.orderplz_01.orders.dto.request.OrderStatusChangeReq;
 import com.back.orderplz_01.orders.dto.response.OrdersDetailRes;
-import com.back.orderplz_01.orders.dto.response.OrdersOwnerSearch;
+import com.back.orderplz_01.orders.dto.response.OrdersOwnerSearchRes;
 import com.back.orderplz_01.orders.dto.response.OrdersSearchListRes;
 import com.back.orderplz_01.orders.service.OrdersService;
 
@@ -42,8 +42,10 @@ public class OrdersController {
 
 	/** OWN-09 업주 전체 주문 목록 */
 	@GetMapping("/owner/orderlist")
-	public OrdersOwnerSearch ownerOrdersList() {
-		return ordersService.getAllProcessingOrders();
+	@Operation(summary = "OWN-09 업주 전체 주문 목록 조회 API")
+	public ResponseEntity<ApiRes<OrdersOwnerSearchRes>> ownerOrdersList() {
+		OrdersOwnerSearchRes result = ordersService.getAllProcessingOrders();
+		return ResponseEntity.ok(new ApiRes<>("업주 전체 주문 목록 조회 완료", result));
 	}
 
 	@GetMapping("/{ordersId}")
@@ -53,8 +55,10 @@ public class OrdersController {
 
 	/** CUS-09 주문 검색 API */
 	@PostMapping("/search")
-	public OrdersSearchListRes search(@Valid @RequestBody OrderSearchRequestDto request) {
-		return ordersService.search(request);
+	@Operation(summary = "CUS-09 주문 검색 API")
+	public ResponseEntity<ApiRes<OrdersSearchListRes>> search(@Valid @RequestBody OrderSearchRequestDto request) {
+		OrdersSearchListRes result = ordersService.search(request);
+		return ResponseEntity.ok(new ApiRes<>("주문 검색 조회 완료", result));
 	}
 
 	// OWN-04 : 주문 상태 변경 API

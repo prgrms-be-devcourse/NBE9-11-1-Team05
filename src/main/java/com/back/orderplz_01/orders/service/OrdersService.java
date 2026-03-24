@@ -18,8 +18,8 @@ import com.back.orderplz_01.global.apiRes.ApiRes;
 import com.back.orderplz_01.orders.dto.request.CoffeeOrderList;
 import com.back.orderplz_01.orders.dto.request.CoffeeOrderReq;
 import com.back.orderplz_01.orders.dto.request.OrderSearchRequestDto;
-import com.back.orderplz_01.orders.dto.response.OrdersOwnerSearch;
 import com.back.orderplz_01.orders.dto.response.OrdersOwnerSearchItem;
+import com.back.orderplz_01.orders.dto.response.OrdersOwnerSearchRes;
 import com.back.orderplz_01.orders.dto.response.OrdersDetailRes;
 import com.back.orderplz_01.orders.dto.response.OrdersSearchItemRes;
 import com.back.orderplz_01.orders.dto.response.OrdersSearchLineItemRes;
@@ -174,7 +174,7 @@ public class OrdersService {
 		return OrdersDetailRes.from(order);
 	}
 
-	// ---------------------------------------------------------------------------
+	// ----------------------------------CUS-09 고객 주문내역 조회-----------------------------------------
 	// CUS-09 내 주문정보 조회 (이메일 주소 우편번호)
 
 	@Transactional(readOnly = true)
@@ -227,17 +227,25 @@ public class OrdersService {
 	// 반환 항목: 주문번호, 주문자 이메일, 주문일시, 총 금액
 
 	@Transactional(readOnly = true)
-	public OrdersOwnerSearch getAllProcessingOrders() {
+	public OrdersOwnerSearchRes getAllProcessingOrders() {
 		List<Orders> found = ordersRepository.findAll(
 			Sort.by(Sort.Direction.DESC, "orderedAt")
 		);
 
-		// OWN-09 OrdersOwnerSearchItem 리스트로 변환
-		// 주문번호, 이메일, 주문일시, 총금액 반환
-		List<OrdersOwnerSearchItem> orderList = found.stream()
-			.map(OrdersOwnerSearchItem::from)
-			.toList();
+		List<OrdersOwnerSearchItem> orderList = new ArrayList<>(found.size());
+		for (Orders order : found) {
+			orderList.add(toOrdersOwnerSearchItem(order));
+		}
 
-		return new OrdersOwnerSearch(orderList);
+		return new OrdersOwnerSearchRes(orderList);
+	}
+
+	/* OWN-09 주문 한 건 (주문번호, 이메일, 주문일시, 총금액) */
+	private OrdersOwnerSearchItem toOrdersOwnerSearchItem(Orders order) {
+		return new OrdersOwnerSearchItem(
+				order.getId(),
+				order.getEmail(),
+				order.getOrderedAt(),
+				order.getTotalAmount());
 	}
 }
