@@ -16,7 +16,7 @@ public class SpringDoc {
     public GroupedOpenApi coffeesApi() {
         return GroupedOpenApi.builder()
                 .group("원두 API") // 우측 상단 선택창에 보여질 이름
-                .pathsToMatch("/api/coffees/**", "/coffees/**")       // 이 그룹에 묶어줄 API 주소 패턴 (컨트롤러 주소에 맞춤)
+                .pathsToMatch("/coffees/**")       // 이 그룹에 묶어줄 API 주소 패턴 (컨트롤러 주소에 맞춤)
                 .build();
     }
 
