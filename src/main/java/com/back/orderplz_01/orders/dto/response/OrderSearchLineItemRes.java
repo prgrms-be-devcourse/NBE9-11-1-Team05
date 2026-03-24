@@ -1,4 +1,4 @@
-package com.back.orderplz_01.orders.dto.res;
+package com.back.orderplz_01.orders.dto.response;
 
 public record OrderSearchLineItemRes(
 	String coffeeName,
@@ -6,4 +6,3 @@ public record OrderSearchLineItemRes(
 	Long price
 ) {
 }
-
