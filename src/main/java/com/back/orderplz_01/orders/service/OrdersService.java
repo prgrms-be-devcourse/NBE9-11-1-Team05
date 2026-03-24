@@ -7,6 +7,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.http.ResponseEntity;
+import com.back.orderplz_01.orders.entity.OrderStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,7 +17,6 @@ import com.back.orderplz_01.global.apiRes.ApiRes;
 import com.back.orderplz_01.orders.dto.request.CoffeeOrderList;
 import com.back.orderplz_01.orders.dto.request.CoffeeOrderReq;
 import com.back.orderplz_01.orders.dto.response.OrdersDetailRes;
-import com.back.orderplz_01.orders.entity.OrderStatus;
 import com.back.orderplz_01.orders.entity.Orders;
 import com.back.orderplz_01.orders.entity.OrdersItem;
 import com.back.orderplz_01.orders.repository.OrdersRepository;
@@ -153,4 +153,14 @@ public class OrdersService {
 
 		return coffeeMap;
 	}
+	// 주문이 존재해야 배송 상태 변경 가능하므로 조회 후 처리
+	@Transactional
+	public void changeStatus(Long orderId, OrderStatus newStatus) {
+
+		Orders order = ordersRepository.findById(orderId)
+				.orElseThrow(() -> new IllegalArgumentException("주문 없음"));
+
+		order.changeStatus(newStatus);
+	}
+
 }
