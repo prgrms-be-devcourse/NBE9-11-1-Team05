@@ -49,12 +49,13 @@ public class CoffeeController {
     }
 
     //CUS-02 : 커피 상세내용 보여주기.
+    //API 응답 적용 완료
     @GetMapping("/detail/{coffeeId}")
     @Operation(summary = "원두 상세 조회", description = "원두 ID를 통해 특정 원두의 상세 정보를 조회합니다.")
-
-    public CoffeeDetailResponse getCoffeeDetail(
+    public ResponseEntity<ApiRes<CoffeeDetailResponse>> getCoffeeDetail(
             @PathVariable Long coffeeId) {
-        return coffeeService.getCoffeeDetail(coffeeId);
+        CoffeeDetailResponse data = coffeeService.getCoffeeDetail(coffeeId);
+        return ResponseEntity.ok(new ApiRes<>("원두 상세 조회 성공", data));
     }
 
 

@@ -47,6 +47,7 @@ public class CoffeeService {
         return CoffeeDetailResponse.from(coffee);
     }
 
+
     //own-02에서 사용
     @Transactional
     public CoffeeResponseDto update(Long id, CoffeeUpdateRequestDto requestDto) {
