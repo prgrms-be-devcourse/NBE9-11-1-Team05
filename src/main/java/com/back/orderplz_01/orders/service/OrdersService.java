@@ -32,14 +32,16 @@ public class OrdersService {
 		return OrdersDetailRes.from(orders);
 	}
 
-	// 주문이 존재해야 배송 상태 변경 가능하므로 조회 후 처리
+	// OWN-04 : 주문 상태 변경
 	@Transactional
-	public void changeStatus(Long orderId, OrderStatus newStatus) {
+	public OrdersDetailRes changeStatus(Long orderId, OrderStatus newStatus) {
 
 		Orders order = ordersRepository.findById(orderId)
 				.orElseThrow(() -> new IllegalArgumentException("주문 없음"));
 
 		order.changeStatus(newStatus);
+
+		return OrdersDetailRes.from(order);
 	}
 
 	// ---------------------------------------------------------------------------

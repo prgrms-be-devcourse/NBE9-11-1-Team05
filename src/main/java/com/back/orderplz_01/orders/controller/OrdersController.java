@@ -1,6 +1,7 @@
 package com.back.orderplz_01.orders.controller;
 
 import com.back.orderplz_01.orders.dto.request.OrderSearchRequestDto;
+import com.back.orderplz_01.global.apiRes.ApiRes;
 import com.back.orderplz_01.orders.dto.request.OrderStatusChangeReq;
 import com.back.orderplz_01.orders.dto.res.OrdersDetailRes;
 import com.back.orderplz_01.orders.dto.response.OrdersOwnerRes;
@@ -50,17 +51,18 @@ public class OrdersController {
 		return ordersService.search(request);
 	}
 
+	// OWN-04 : 주문 상태 변경 API
 	@PatchMapping("/{id}/status")
 	@Operation(
 			summary = "주문 상태 변경",
 			description = "PROCESSING → SHIPPED → DELIVERED 순으로 상태 변경"
 	)
-	public ResponseEntity<Void> changeStatus(
+	public ResponseEntity<ApiRes<OrdersDetailRes>> changeStatus(
 			@Parameter(description = "주문 ID")
 			@PathVariable Long id,
 			@RequestBody @Valid OrderStatusChangeReq request
 	) {
-		ordersService.changeStatus(id, request.status());
-		return ResponseEntity.ok().build();
+		OrdersDetailRes updatedStatus = ordersService.changeStatus(id, request.status());
+		return ResponseEntity.ok(new ApiRes<>("주문 상태 변경 성공", updatedStatus));
 	}
 }
