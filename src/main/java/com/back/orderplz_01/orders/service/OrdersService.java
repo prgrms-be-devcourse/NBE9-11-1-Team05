@@ -1,23 +1,32 @@
 package com.back.orderplz_01.orders.service;
 
-import com.back.orderplz_01.orders.entity.OrderStatus;
-import org.springframework.stereotype.Service;
+import java.util.ArrayList;
+import java.util.List;
 
-import com.back.orderplz_01.coffee.repository.CoffeeRepository;
+import org.springframework.data.domain.Sort;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.back.orderplz_01.orders.dto.request.OrderSearchRequestDto;
+import com.back.orderplz_01.orders.dto.res.OrdersOwnerSearchItem;
+import com.back.orderplz_01.orders.dto.response.OrdersOwnerSearch;
+import com.back.orderplz_01.orders.dto.response.OrdersSearchItemRes;
+import com.back.orderplz_01.orders.dto.response.OrdersSearchLineItemRes;
+import com.back.orderplz_01.orders.dto.response.OrdersSearchListRes;
 import com.back.orderplz_01.orders.dto.res.OrdersDetailRes;
+import com.back.orderplz_01.orders.entity.OrderStatus;
 import com.back.orderplz_01.orders.entity.Orders;
+import com.back.orderplz_01.orders.entity.OrdersItem;
 import com.back.orderplz_01.orders.repository.OrdersRepository;
 
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
 public class OrdersService {
 
 	private final OrdersRepository ordersRepository;
-	private final CoffeeRepository coffeeRepository;
 
 	public OrdersDetailRes ordersDetail(Long ordersId) {
 		Orders orders = ordersRepository.findById(ordersId)
@@ -38,4 +47,78 @@ public class OrdersService {
 		return OrdersDetailRes.from(order);
 	}
 
+	// ---------------------------------------------------------------------------
+	// CUS-09 내 주문정보 조회 (이메일 주소 우편번호)
+
+	@Transactional(readOnly = true)
+	public OrdersSearchListRes search(OrderSearchRequestDto request) {
+		String email = request.email();
+		String address = request.address();
+		String zipCode = request.zipCode();
+
+		List<Orders> orders = ordersRepository.findOrdersForList(email, address, zipCode);
+
+		List<OrdersSearchItemRes> orderList = new ArrayList<>(orders.size());
+		for (Orders order : orders) {
+			orderList.add(toOrdersSearchItemRes(order));
+		}
+
+		return new OrdersSearchListRes(orderList);
+	}
+
+	/* CUS-09 주문 정보 (주문번호,일자,주문상태,주문라인아이템,주소,우편번호,총금액) */
+	private OrdersSearchItemRes toOrdersSearchItemRes(Orders order) {
+		List<OrdersSearchLineItemRes> orderLines = new ArrayList<>();
+		for (OrdersItem item : order.getOrderItems()) {
+			orderLines.add(toOrdersSearchLineItemRes(item));
+		}
+
+		return new OrdersSearchItemRes(
+				order.getId(),
+				order.getOrderedAt(),
+				order.getOrderStatus(),
+				orderLines,
+				order.getAddress(),
+				order.getZipCode(),
+				order.getTotalAmount());
+	}
+
+	/* CUS-09 주문한 아이템의 정보를 라인별로 생성 후 반환 (원두명, 수량, 가격) */
+	/* ex: 에티오피아 2봉, 케냐 1봉을 같이 구매했다면? 주문 라인은 2줄 */
+	private OrdersSearchLineItemRes toOrdersSearchLineItemRes(OrdersItem item) {
+		return new OrdersSearchLineItemRes(
+				item.getCoffee().getName(),
+				item.getQuantity(),
+				item.getPrice());
+	}
+
+	// ---------------------------------------------------------------------------
+	// OWN-09 업주 주문관리 - 전체 주문 목록 조회
+	// 결제 완료된 모든 주문 건을 보여줘야 하므로 findall 처리 Repository 사용 X
+	// 서비스에서 ordersRepository.findAll로 orderedAt 기준 정렬 조회하여 
+	// 해당 API에서 전체 주문 목록을 제공
+	// 반환 항목: 주문번호, 주문자 이메일, 주문일시, 총 금액
+
+	@Transactional(readOnly = true)
+	public OrdersOwnerSearch getAllProcessingOrders() {
+		List<Orders> found = ordersRepository.findAll(
+			Sort.by(Sort.Direction.DESC, "orderedAt")
+		);
+
+		List<OrdersOwnerSearchItem> orderList = new ArrayList<>(found.size());
+		for (Orders order : found) {
+			orderList.add(toOrdersOwnerSearchItem(order));
+		}
+
+		return new OrdersOwnerSearch(orderList);
+	}
+
+	/* OWN-09 주문 한 건 (주문번호, 이메일, 주문일시, 총금액) */
+	private OrdersOwnerSearchItem toOrdersOwnerSearchItem(Orders order) {
+		return new OrdersOwnerSearchItem(
+				order.getId(),
+				order.getEmail(),
+				order.getOrderedAt(),
+				order.getTotalAmount());
+	}
 }
