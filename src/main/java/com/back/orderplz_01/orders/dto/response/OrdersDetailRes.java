@@ -1,4 +1,4 @@
-package com.back.orderplz_01.orders.dto.res;
+package com.back.orderplz_01.orders.dto.response;
 
 import java.time.LocalDateTime;
 

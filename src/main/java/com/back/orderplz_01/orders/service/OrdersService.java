@@ -15,7 +15,7 @@ import com.back.orderplz_01.coffee.repository.CoffeeRepository;
 import com.back.orderplz_01.global.apiRes.ApiRes;
 import com.back.orderplz_01.orders.dto.request.CoffeeOrderList;
 import com.back.orderplz_01.orders.dto.request.CoffeeOrderReq;
-import com.back.orderplz_01.orders.dto.res.OrdersDetailRes;
+import com.back.orderplz_01.orders.dto.response.OrdersDetailRes;
 import com.back.orderplz_01.orders.entity.OrderStatus;
 import com.back.orderplz_01.orders.entity.Orders;
 import com.back.orderplz_01.orders.entity.OrdersItem;
