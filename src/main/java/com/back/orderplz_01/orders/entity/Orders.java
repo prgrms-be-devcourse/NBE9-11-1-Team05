@@ -68,6 +68,7 @@ public class Orders extends BaseEntity {
 	}
 
 	// 배송 상태 변경
+	// OWN-04 : 배송 상태 변경 흐름 제어
 	public void changeStatus(OrderStatus newStatus) {
 
 		if (this.orderStatus == OrderStatus.PROCESSING && newStatus == OrderStatus.SHIPPED) {

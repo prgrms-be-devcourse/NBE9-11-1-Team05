@@ -11,20 +11,19 @@ import io.swagger.v3.oas.annotations.info.Info;
 @OpenAPIDefinition(info = @Info(title = "주문하시조 API", version = "beta", description = "1차 프로젝트 API"))
 public class SpringDoc {
 
-    // 1. 고객용 API 그룹 설정
     @Bean
-    public GroupedOpenApi customerApi() {
+    public GroupedOpenApi coffeesApi() {
         return GroupedOpenApi.builder()
-                .group("고객용 API") // 우측 상단 선택창에 보여질 이름
-                .pathsToMatch("/coffees/**")       // 이 그룹에 묶어줄 API 주소 패턴 (컨트롤러 주소에 맞춤)
+                .group("원두 API")
+                .pathsToMatch("/coffees/**")
                 .build();
     }
 
     @Bean
-    public GroupedOpenApi orderApi() {
+    public GroupedOpenApi ordersApi() {
         return GroupedOpenApi.builder()
-            .group("주문 API") // 우측 상단 선택창에 보여질 이름
-            .pathsToMatch("/orders/**")       // 이 그룹에 묶어줄 API 주소 패턴 (컨트롤러 주소에 맞춤)
+            .group("주문 API")
+            .pathsToMatch("/orders/**")
             .build();
     }
 }

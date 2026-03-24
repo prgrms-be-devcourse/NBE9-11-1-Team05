@@ -12,8 +12,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.back.orderplz_01.global.apiRes.ApiRes;
 import com.back.orderplz_01.orders.dto.request.CoffeeOrderReq;
+import com.back.orderplz_01.orders.dto.request.OrderSearchRequestDto;
 import com.back.orderplz_01.orders.dto.request.OrderStatusChangeReq;
 import com.back.orderplz_01.orders.dto.response.OrdersDetailRes;
+import com.back.orderplz_01.orders.dto.response.OrdersSearchListRes;
 import com.back.orderplz_01.orders.service.OrdersService;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -42,17 +44,24 @@ public class OrdersController {
 		return ordersService.ordersDetail(ordersId);
 	}
 
+	/** CUS-09 주문 검색 API */
+	@PostMapping("/search")
+	public OrdersSearchListRes search(@Valid @RequestBody OrderSearchRequestDto request) {
+		return ordersService.search(request);
+	}
+
+	// OWN-04 : 주문 상태 변경 API
 	@PatchMapping("/{id}/status")
 	@Operation(
 			summary = "주문 상태 변경",
 			description = "PROCESSING → SHIPPED → DELIVERED 순으로 상태 변경"
 	)
-	public ResponseEntity<Void> changeStatus(
+	public ResponseEntity<ApiRes<OrdersDetailRes>> changeStatus(
 			@Parameter(description = "주문 ID")
 			@PathVariable Long id,
 			@RequestBody @Valid OrderStatusChangeReq request
 	) {
-		ordersService.changeStatus(id, request.status());
-		return ResponseEntity.ok().build();
+		OrdersDetailRes updatedStatus = ordersService.changeStatus(id, request.status());
+		return ResponseEntity.ok(new ApiRes<>("주문 상태 변경 성공", updatedStatus));
 	}
 }

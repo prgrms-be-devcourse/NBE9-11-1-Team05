@@ -1,4 +1,4 @@
-package com.back.orderplz_01.coffee.dto;
+package com.back.orderplz_01.coffee.dto.request;
 
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;

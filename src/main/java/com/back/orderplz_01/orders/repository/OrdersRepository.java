@@ -1,6 +1,7 @@
 package com.back.orderplz_01.orders.repository;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -26,5 +27,22 @@ public interface OrdersRepository extends JpaRepository<Orders, Long> {
 		@Param("status") OrderStatus status,
 		@Param("start") LocalDateTime start,
 		@Param("end") LocalDateTime end
+	);
+
+	/* CUS-09 내 주문 목록 검색. (이메일 배송지 주소 우편번호) */
+	@Query("""
+		SELECT DISTINCT o
+		FROM Orders o
+		LEFT JOIN FETCH o.orderItems oi
+		LEFT JOIN FETCH oi.coffee
+		WHERE o.email = :email
+		  AND o.address = :address
+		  AND o.zipCode = :zipCode
+		ORDER BY o.orderedAt DESC
+		""")
+	List<Orders> findOrdersForList(
+		@Param("email") String email,
+		@Param("address") String address,
+		@Param("zipCode") String zipCode
 	);
 }

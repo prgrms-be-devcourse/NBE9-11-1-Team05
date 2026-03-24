@@ -1,18 +1,18 @@
 package com.back.orderplz_01.coffee.service;
 
+import java.util.List;
 
-import com.back.orderplz_01.coffee.dto.CoffeeDetailResponse;
-import com.back.orderplz_01.coffee.entity.Coffee;
-import com.back.orderplz_01.coffee.repository.CoffeeRepository;
-import jakarta.persistence.EntityNotFoundException;
-import com.back.orderplz_01.coffee.dto.CoffeeResponseDto;
-import com.back.orderplz_01.coffee.dto.CoffeeUpdateRequestDto;
 import org.springframework.stereotype.Service;
-
-import lombok.RequiredArgsConstructor;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
+import com.back.orderplz_01.coffee.dto.request.CoffeeUpdateRequestDto;
+import com.back.orderplz_01.coffee.dto.response.CoffeeDetailResponse;
+import com.back.orderplz_01.coffee.dto.response.CoffeeResponseDto;
+import com.back.orderplz_01.coffee.entity.Coffee;
+import com.back.orderplz_01.coffee.repository.CoffeeRepository;
+
+import jakarta.persistence.EntityNotFoundException;
+import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
@@ -26,9 +26,6 @@ public class CoffeeService {
                 .map(CoffeeResponseDto::from)
                 .toList();
     }
-
-
-
 
     //own-02에서 사용
     @Transactional(readOnly = true)
