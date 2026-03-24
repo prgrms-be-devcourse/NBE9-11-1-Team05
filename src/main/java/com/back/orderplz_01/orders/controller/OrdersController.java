@@ -3,7 +3,7 @@ package com.back.orderplz_01.orders.controller;
 import com.back.orderplz_01.orders.dto.request.OrderSearchRequestDto;
 import com.back.orderplz_01.orders.dto.request.OrderStatusChangeReq;
 import com.back.orderplz_01.orders.dto.res.OrdersDetailRes;
-import com.back.orderplz_01.orders.dto.response.OrderSearchResponseDto;
+import com.back.orderplz_01.orders.dto.response.OrdersSearchListRes;
 import com.back.orderplz_01.orders.service.OrdersService;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -36,7 +36,7 @@ public class OrdersController {
 
 	/** CUS-09 주문 검색 API */
 	@PostMapping("/search")
-	public OrderSearchResponseDto search(@Valid @RequestBody OrderSearchRequestDto request) {
+	public OrdersSearchListRes search(@Valid @RequestBody OrderSearchRequestDto request) {
 		return ordersService.search(request);
 	}
 

@@ -5,11 +5,12 @@ import java.util.List;
 
 import com.back.orderplz_01.orders.entity.OrderStatus;
 
-public record OrderSearchRes(
+/* CUS-09 주문 정보 (주문번호,일자,주문상태,주문라인아이템,주소,우편번호,총금액) */
+public record OrdersSearchItemRes(
 	Long orderId,
-	LocalDateTime orderDate,
+	LocalDateTime orderedAt,
 	OrderStatus orderStatus,
-	List<OrderSearchLineItemRes> orderLines,
+	List<OrdersSearchLineItemRes> orderLines,
 	String address,
 	String zipCode,
 	Long totalAmount

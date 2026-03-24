@@ -36,7 +36,7 @@ public interface OrdersRepository extends JpaRepository<Orders, Long> {
 		WHERE o.email = :email
 		  AND o.address = :address
 		  AND o.zipCode = :zipCode
-		ORDER BY o.createDate DESC
+		ORDER BY o.orderedAt DESC
 		""")
 	List<Orders> findOrdersForList(
 		@Param("email") String email,

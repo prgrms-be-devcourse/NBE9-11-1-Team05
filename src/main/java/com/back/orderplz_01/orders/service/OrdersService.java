@@ -1,17 +1,15 @@
 package com.back.orderplz_01.orders.service;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.back.orderplz_01.coffee.repository.CoffeeRepository;
 import com.back.orderplz_01.orders.dto.request.OrderSearchRequestDto;
-import com.back.orderplz_01.orders.dto.response.OrderSearchLineItemRes;
-import com.back.orderplz_01.orders.dto.response.OrderSearchResponseDto;
-import com.back.orderplz_01.orders.dto.response.OrderSearchRes;
+import com.back.orderplz_01.orders.dto.response.OrdersSearchItemRes;
+import com.back.orderplz_01.orders.dto.response.OrdersSearchLineItemRes;
+import com.back.orderplz_01.orders.dto.response.OrdersSearchListRes;
 import com.back.orderplz_01.orders.dto.res.OrdersDetailRes;
 import com.back.orderplz_01.orders.entity.OrderStatus;
 import com.back.orderplz_01.orders.entity.Orders;
@@ -20,7 +18,7 @@ import com.back.orderplz_01.orders.repository.OrdersRepository;
 
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.transaction.annotation.Transactional;
+
 @Service
 @RequiredArgsConstructor
 public class OrdersService {
@@ -45,34 +43,49 @@ public class OrdersService {
 	}
 
 	// ---------------------------------------------------------------------------
-	// CUS-09 내 주문 목록 검색 (이메일 배송지 주소 우편번호)
-	// - 주문 요약 + 라인 아이템(원두명, 수량, 가격) 목록 반환 (없으면 빈 목록)
-
+	// CUS-09 내 주문정보 조회 (이메일 주소 우편번호)
+	
 	@Transactional(readOnly = true)
-	public OrderSearchResponseDto search(OrderSearchRequestDto request) {
+	public OrdersSearchListRes search(OrderSearchRequestDto request) {
 		String email = request.email().trim();
 		String address = request.address().trim();
 		String zipCode = request.zipCode().trim();
+	
+		List<Orders> orders = ordersRepository.findOrdersForList(email, address, zipCode);
+	
+		List<OrdersSearchItemRes> orderList = new ArrayList<>(orders.size());
+		for (Orders order : orders) {
+			orderList.add(toOrdersSearchItemRes(order));
+		}
 
-		List<Orders> found = ordersRepository.findOrdersForList(email, address, zipCode);
-		List<OrderSearchRes> summaries = 
-				found.stream()
-				.map(this::toSummary)
-				.collect(Collectors.toList());
-
-		return new OrderSearchResponseDto(summaries);
+		return new OrdersSearchListRes(orderList);
 	}
 
-	private OrderSearchRes toSummary(Orders order) {
-		List<OrderSearchLineItemRes> lines = order.getOrderItems() == null ? List.of()
-				: order.getOrderItems().stream().filter(Objects::nonNull).map(this::toLine).collect(Collectors.toList());
-		return new OrderSearchRes(order.getId(), order.getCreateDate(), order.getOrderStatus(), lines,
-				order.getAddress(), order.getZipCode(), order.getTotalAmount());
+	/* CUS-09 주문 정보 (주문번호,일자,주문상태,주문라인아이템,주소,우편번호,총금액) */
+	private OrdersSearchItemRes toOrdersSearchItemRes(Orders order) {
+		List<OrdersSearchLineItemRes> orderLines = new ArrayList<>();
+		for (OrdersItem item : order.getOrderItems()) {
+			orderLines.add(toOrdersSearchLineItemRes(item));
+		}
+
+		return new OrdersSearchItemRes(
+				order.getId(),
+				order.getOrderedAt(),
+				order.getOrderStatus(),
+				orderLines,
+				order.getAddress(),
+				order.getZipCode(),
+				order.getTotalAmount());
 	}
 
-	private OrderSearchLineItemRes toLine(OrdersItem item) {
-		String coffeeName = item.getCoffee() != null ? item.getCoffee().getName() : null;
-		return new OrderSearchLineItemRes(coffeeName, item.getQuantity(), item.getPrice());
+	/* CUS-09 주문한 아이템의 정보를 라인별로 생성 후 반환 (원두명, 수량, 가격) */
+	/* ex: 에티오피아 2봉, 케냐 1봉을 같이 구매했다면? 주문 라인은 2줄 */
+	private OrdersSearchLineItemRes toOrdersSearchLineItemRes(OrdersItem item) {
+		return new OrdersSearchLineItemRes(
+				item.getCoffee().getName(),
+				item.getQuantity(),
+				item.getPrice());
 	}
 
+	// ---------------------------------------------------------------------------
 }
