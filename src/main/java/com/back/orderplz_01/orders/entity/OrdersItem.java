@@ -7,13 +7,11 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
-@AllArgsConstructor
 @NoArgsConstructor
 public class OrdersItem extends BaseEntity {
 
@@ -30,6 +28,13 @@ public class OrdersItem extends BaseEntity {
 	@ManyToOne
 	@JoinColumn(name = "coffee_id")
 	private Coffee coffee;
+
+	public OrdersItem(Long quantity, Long price, Orders orders, Coffee coffee) {
+		this.quantity = quantity;
+		this.price = price;
+		this.orders = orders;
+		this.coffee = coffee;
+	}
 
 	public void addQuantity(Long quantity) {
 		this.quantity += quantity;

@@ -19,8 +19,6 @@ spring:
     ansi:
       enabled: always
 
-
-
   jpa:
     properties:
       hibernate:

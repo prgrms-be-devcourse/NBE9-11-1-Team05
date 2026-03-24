@@ -7,7 +7,6 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.http.ResponseEntity;
-import com.back.orderplz_01.orders.entity.OrderStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,6 +16,7 @@ import com.back.orderplz_01.global.apiRes.ApiRes;
 import com.back.orderplz_01.orders.dto.request.CoffeeOrderList;
 import com.back.orderplz_01.orders.dto.request.CoffeeOrderReq;
 import com.back.orderplz_01.orders.dto.response.OrdersDetailRes;
+import com.back.orderplz_01.orders.entity.OrderStatus;
 import com.back.orderplz_01.orders.entity.Orders;
 import com.back.orderplz_01.orders.entity.OrdersItem;
 import com.back.orderplz_01.orders.repository.OrdersRepository;
@@ -74,7 +74,7 @@ public class OrdersService {
 
 	private boolean bundleIfDuplicateOrder(CoffeeOrderReq req, Map<Long, Coffee> coffeeMap) {
 		LocalDateTime now = LocalDateTime.now();
-		LocalDateTime todayAt2pm = now.toLocalDate().atTime(14, 0);
+		LocalDateTime todayAt2pm = now.toLocalDate().atTime(18, 0);
 
 		if (now.isAfter(todayAt2pm)) {
 			return false; // 오후 2시 이후면 묶음 불가
