@@ -42,15 +42,16 @@ class CoffeeControllerTest {
         // 2. When & Then: 실제 URL로 요청을 날리고 결과를 검증함
         mvc.perform(get("/coffees/detail/" + coffee.getId()))
                 .andExpect(status().isOk()) // 200 OK가 나오는지?
-                .andExpect(jsonPath("$.name").value("에티오피아")) // 이름이 맞는지?
-                .andExpect(jsonPath("$.description").value("맛있는 원두")) // 설명이 맞는지?
-                .andExpect(jsonPath("$.price").value(15000)) // 가격이 맞는지?
-                .andExpect(jsonPath("$.quantity").value(100)); // 이름이 맞는지?
+                .andExpect(jsonPath("$.message").value("원두 상세 조회 성공")) // (추가) 상태 메시지가 맞는지?
+                .andExpect(jsonPath("$.data.name").value("에티오피아")) // 이름이 맞는지?
+                .andExpect(jsonPath("$.data.description").value("맛있는 원두")) // 설명이 맞는지?
+                .andExpect(jsonPath("$.data.price").value(15000)) // 가격이 맞는지?
+                .andExpect(jsonPath("$.data.quantity").value(100)); // 수량이 맞는지?
 
     }
 
     @Test
-    @DisplayName("test: CUS-02 존재하지 않는 원두 조회 시 400 에러")
+    @DisplayName("test: CUS-02 존재하지 않는 원두 조회 시 500 에러")
     void getCoffeeDetailNotFoundTest() throws Exception {
         // 1. Given: DB에 없는 ID (예: 9999번)
 
