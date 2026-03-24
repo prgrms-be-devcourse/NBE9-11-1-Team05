@@ -23,11 +23,11 @@ public class OrdersItem extends BaseEntity {
 	@Column(nullable = false)
 	private Long price;
 
-	@ManyToOne(optional = false)
-	@JoinColumn(name = "orders_id", nullable = false)
+	@ManyToOne
+	@JoinColumn(name = "orders_id")
 	private Orders orders;
 
-	@ManyToOne(optional = false)
-	@JoinColumn(name = "coffee_id", nullable = false)
+	@ManyToOne
+	@JoinColumn(name = "coffee_id")
 	private Coffee coffee;
 }

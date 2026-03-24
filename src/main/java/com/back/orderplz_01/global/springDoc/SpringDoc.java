@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 @OpenAPIDefinition(info = @Info(title = "주문하시조 API", version = "beta", description = "1차 프로젝트 API"))
 public class SpringDoc {
 
+    // 1. 고객용 API 그룹 설정
     @Bean
     public GroupedOpenApi coffeesApi() {
         return GroupedOpenApi.builder()
