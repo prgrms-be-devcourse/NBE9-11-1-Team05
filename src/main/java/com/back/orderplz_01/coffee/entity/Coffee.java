@@ -33,6 +33,10 @@ public class Coffee extends BaseEntity {
 		return coffee;
 	}
 
+	public void increaseQuantity(Long quantity) {
+		this.quantity += quantity;
+	}
+
 	public void decreaseQuantity(Long quantity) {
 		if (this.quantity < quantity) {
 			throw new IllegalArgumentException("재고가 부족합니다.");
