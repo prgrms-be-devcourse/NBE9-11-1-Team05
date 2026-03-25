@@ -152,18 +152,6 @@ public class OrdersService {
 
 		return coffeeMap;
 	}
-	// 주문이 존재해야 배송 상태 변경 가능하므로 조회 후 처리
-	// OWN-04 : 주문 상태 변경
-	@Transactional
-	public OrdersDetailRes changeStatus(Long orderId, OrderStatus newStatus) {
-
-		Orders order = ordersRepository.findById(orderId)
-				.orElseThrow(() -> new IllegalArgumentException("주문 없음"));
-
-		order.changeStatus(newStatus);
-
-		return OrdersDetailRes.from(order);
-	}
 
 	// ---------------------------------------------------------------------------
 	// CUS-09 내 주문정보 조회 (이메일 주소 우편번호)
@@ -192,21 +180,52 @@ public class OrdersService {
 		}
 
 		return new OrdersSearchItemRes(
-				order.getId(),
-				order.getOrderedAt(),
-				order.getOrderStatus(),
-				orderLines,
-				order.getAddress(),
-				order.getZipCode(),
-				order.getTotalAmount());
+			order.getId(),
+			order.getOrderedAt(),
+			order.getOrderStatus(),
+			orderLines,
+			order.getAddress(),
+			order.getZipCode(),
+			order.getTotalAmount());
 	}
 
 	/* CUS-09 주문한 아이템의 정보를 라인별로 생성 후 반환 (원두명, 수량, 가격) */
 	/* ex: 에티오피아 2봉, 케냐 1봉을 같이 구매했다면? 주문 라인은 2줄 */
 	private OrdersSearchLineItemRes toOrdersSearchLineItemRes(OrdersItem item) {
 		return new OrdersSearchLineItemRes(
-				item.getCoffee().getName(),
-				item.getQuantity(),
-				item.getPrice());
+			item.getCoffee().getName(),
+			item.getQuantity(),
+			item.getPrice());
+	}
+
+	@Transactional
+	public void deleteOrders(Long ordersId) {
+		Orders orders = ordersRepository.findByIdWithItems(ordersId)
+			.orElseThrow(() -> new EntityNotFoundException("존재하지 않는 주문입니다."));
+
+		// 준비중인 상품만 취소
+		if(!OrderStatus.PROCESSING.equals(orders.getOrderStatus())) {
+			throw new IllegalStateException("준비중인 상품만 취소할 수 있습니다.");
+		}
+
+		// 취소한 주문 상품 재고 복구
+		orders.getOrderItems().forEach(orderItem ->
+			orderItem.getCoffee().increaseQuantity(orderItem.getQuantity())
+		);
+
+		ordersRepository.delete(orders);
+	}
+
+	// 주문이 존재해야 배송 상태 변경 가능하므로 조회 후 처리
+	// OWN-04 : 주문 상태 변경
+	@Transactional
+	public OrdersDetailRes changeStatus(Long orderId, OrderStatus newStatus) {
+
+		Orders order = ordersRepository.findById(orderId)
+			.orElseThrow(() -> new IllegalArgumentException("주문 없음"));
+
+		order.changeStatus(newStatus);
+
+		return OrdersDetailRes.from(order);
 	}
 }
