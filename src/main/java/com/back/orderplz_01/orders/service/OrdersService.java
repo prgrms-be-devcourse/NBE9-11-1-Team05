@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -14,6 +15,8 @@ import com.back.orderplz_01.coffee.entity.Coffee;
 import com.back.orderplz_01.coffee.repository.CoffeeRepository;
 import com.back.orderplz_01.orders.dto.request.CoffeeOrderList;
 import com.back.orderplz_01.orders.dto.request.CoffeeOrderReq;
+import com.back.orderplz_01.orders.dto.response.OrdersOwnerSearchItem;
+import com.back.orderplz_01.orders.dto.response.OrdersOwnerSearchRes;
 import com.back.orderplz_01.orders.dto.response.OrdersDetailRes;
 import com.back.orderplz_01.orders.dto.response.OrdersSearchItemRes;
 import com.back.orderplz_01.orders.dto.response.OrdersSearchLineItemRes;
@@ -152,7 +155,7 @@ public class OrdersService {
 		return coffeeMap;
 	}
 
-	// ---------------------------------------------------------------------------
+	// ----------------------------------CUS-09 고객 주문내역 조회-----------------------------------------
 	// CUS-09 내 주문정보 조회 (이메일 주소 우편번호)
 
 	@Transactional(readOnly = true)
@@ -223,5 +226,35 @@ public class OrdersService {
 		order.changeStatus(newStatus);
 
 		return OrdersDetailRes.from(order);
+	}
+
+	// ---------------------------------------------------------------------------
+	// OWN-09 업주 주문관리 - 전체 주문 목록 조회
+	// 결제 완료된 모든 주문 건을 보여줘야 하므로 findall 처리 Repository 사용 X
+	// 서비스에서 ordersRepository.findAll로 orderedAt 기준 정렬 조회하여 
+	// 해당 API에서 전체 주문 목록을 제공
+	// 반환 항목: 주문번호, 주문자 이메일, 주문일시, 총 금액
+
+	@Transactional(readOnly = true)
+	public OrdersOwnerSearchRes getAllProcessingOrders() {
+		List<Orders> found = ordersRepository.findAll(
+			Sort.by(Sort.Direction.DESC, "orderedAt")
+		);
+
+		List<OrdersOwnerSearchItem> orderList = new ArrayList<>(found.size());
+		for (Orders order : found) {
+			orderList.add(toOrdersOwnerSearchItem(order));
+		}
+
+		return new OrdersOwnerSearchRes(orderList);
+	}
+
+	/* OWN-09 주문 한 건 (주문번호, 이메일, 주문일시, 총금액) */
+	private OrdersOwnerSearchItem toOrdersOwnerSearchItem(Orders order) {
+		return new OrdersOwnerSearchItem(
+				order.getId(),
+				order.getEmail(),
+				order.getOrderedAt(),
+				order.getTotalAmount());
 	}
 }

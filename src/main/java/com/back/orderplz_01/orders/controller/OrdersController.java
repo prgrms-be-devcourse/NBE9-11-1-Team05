@@ -18,6 +18,7 @@ import com.back.orderplz_01.global.apiRes.ApiRes;
 import com.back.orderplz_01.orders.dto.request.CoffeeOrderReq;
 import com.back.orderplz_01.orders.dto.request.OrderStatusChangeReq;
 import com.back.orderplz_01.orders.dto.response.OrdersDetailRes;
+import com.back.orderplz_01.orders.dto.response.OrdersOwnerSearchRes;
 import com.back.orderplz_01.orders.dto.response.OrdersSearchListRes;
 import com.back.orderplz_01.orders.service.OrdersService;
 
@@ -41,6 +42,14 @@ public class OrdersController {
 	public ResponseEntity<ApiRes<Void>> pay(@RequestBody @Valid CoffeeOrderReq req) {
 		ordersService.pay(req);
 		return ResponseEntity.ok(new ApiRes<>("원두 주문 완료", null));
+	}
+
+	/** OWN-09 업주 전체 주문 목록 */
+	@GetMapping("/owner/orderlist")
+	@Operation(summary = "OWN-09 업주 전체 주문 목록 조회 API")
+	public ResponseEntity<ApiRes<OrdersOwnerSearchRes>> ownerOrdersList() {
+		OrdersOwnerSearchRes result = ordersService.getAllProcessingOrders();
+		return ResponseEntity.ok(new ApiRes<>("업주 전체 주문 목록 조회 완료", result));
 	}
 
 	/** CUS-09 주문 검색 API */
