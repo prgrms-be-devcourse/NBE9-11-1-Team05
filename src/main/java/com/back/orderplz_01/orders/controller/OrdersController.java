@@ -1,6 +1,7 @@
 package com.back.orderplz_01.orders.controller;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -37,7 +38,7 @@ public class OrdersController {
 	@Operation(summary = "원두 결제")
 	public ResponseEntity<ApiRes<Void>> pay(@RequestBody @Valid CoffeeOrderReq req) {
 		ordersService.pay(req);
-		return ResponseEntity.ok(new ApiRes<>("원두 주문이 완료되었습니다.", null));
+		return ResponseEntity.ok(new ApiRes<>("원두 주문 완료", null));
 	}
 
 	/** OWN-09 업주 전체 주문 목록 */
@@ -69,7 +70,6 @@ public class OrdersController {
 			summary = "주문 상태 변경",
 			description = "PROCESSING → SHIPPED → DELIVERED 순으로 상태 변경"
 	)
-
 	public ResponseEntity<ApiRes<OrdersDetailRes>> changeStatus(
 			@Parameter(description = "주문 ID")
 			@PathVariable Long id,
