@@ -11,6 +11,7 @@ public record OrdersSearchItemRes(
 	LocalDateTime orderedAt,
 	OrderStatus orderStatus,
 	List<OrdersSearchLineItemRes> orderLines,
+	String email,
 	String address,
 	String zipCode,
 	Long totalAmount
