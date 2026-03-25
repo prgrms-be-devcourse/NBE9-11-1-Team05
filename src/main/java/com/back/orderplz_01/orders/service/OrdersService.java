@@ -15,7 +15,6 @@ import com.back.orderplz_01.coffee.entity.Coffee;
 import com.back.orderplz_01.coffee.repository.CoffeeRepository;
 import com.back.orderplz_01.orders.dto.request.CoffeeOrderList;
 import com.back.orderplz_01.orders.dto.request.CoffeeOrderReq;
-import com.back.orderplz_01.orders.dto.request.OrderSearchRequestDto;
 import com.back.orderplz_01.orders.dto.response.OrdersOwnerSearchItem;
 import com.back.orderplz_01.orders.dto.response.OrdersOwnerSearchRes;
 import com.back.orderplz_01.orders.dto.response.OrdersDetailRes;
@@ -160,10 +159,7 @@ public class OrdersService {
 	// CUS-09 내 주문정보 조회 (이메일 주소 우편번호)
 
 	@Transactional(readOnly = true)
-	public OrdersSearchListRes search(OrderSearchRequestDto request) {
-		String email = request.email();
-		String address = request.address();
-		String zipCode = request.zipCode();
+	public OrdersSearchListRes search(String email, String address, String zipCode) {
 
 		List<Orders> orders = ordersRepository.findOrdersForList(email, address, zipCode);
 
@@ -172,7 +168,7 @@ public class OrdersService {
 			orderList.add(toOrdersSearchItemRes(order));
 		}
 
-		return new OrdersSearchListRes(orderList);
+		return new OrdersSearchListRes(email, orderList);
 	}
 
 	/* CUS-09 주문 정보 (주문번호,일자,주문상태,주문라인아이템,주소,우편번호,총금액) */
