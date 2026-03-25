@@ -2,8 +2,11 @@ spring:
   application:
     name: orderPLZ_01
 
-  profiles:
-    active: dev
+  datasource:
+    url: jdbc:mysql://localhost:3307/orderplz
+    username: root
+    password: lldj123414
+    driver-class-name: com.mysql.cj.jdbc.Driver
 
   output:
     ansi:
