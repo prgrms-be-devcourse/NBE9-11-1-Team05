@@ -3,6 +3,7 @@ package com.back.orderplz_01.orders.dto.response;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import com.back.orderplz_01.orders.entity.OrderStatus;
 import com.back.orderplz_01.orders.entity.Orders;
 
 public record OrdersDetailRes(
@@ -11,6 +12,7 @@ public record OrdersDetailRes(
 	String address,
 	String zipCode,
 	LocalDateTime orderedAt,
+	OrderStatus orderStatus,
 	List<OrdersDetailCoffeeListRes> coffeeList
 ) {
 	public static OrdersDetailRes from(Orders orders) {
@@ -28,6 +30,7 @@ public record OrdersDetailRes(
 			orders.getAddress(),
 			orders.getZipCode(),
 			orders.getOrderedAt(),
+			orders.getOrderStatus(),
 			coffeeList
 		);
 	}
