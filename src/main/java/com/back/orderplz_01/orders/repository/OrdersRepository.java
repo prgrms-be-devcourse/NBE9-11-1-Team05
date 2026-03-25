@@ -29,6 +29,14 @@ public interface OrdersRepository extends JpaRepository<Orders, Long> {
 		@Param("end") LocalDateTime end
 	);
 
+	@Query("""
+		SELECT o FROM Orders o
+				JOIN FETCH o.orderItems oi
+				JOIN FETCH oi.coffee
+				WHERE o.id = :ordersId
+		""")
+	Optional<Orders> findByIdWithItems(@Param("ordersId") Long ordersId);
+
 	/* CUS-09 내 주문 목록 검색. (이메일 배송지 주소 우편번호) */
 	@Query("""
 		SELECT DISTINCT o
