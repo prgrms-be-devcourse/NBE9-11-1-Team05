@@ -4,13 +4,11 @@ import com.back.orderplz_01.global.entity.BaseEntity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
-@AllArgsConstructor
 @NoArgsConstructor
 public class Coffee extends BaseEntity {
 
@@ -25,6 +23,19 @@ public class Coffee extends BaseEntity {
 
 	@Column(nullable = false)
 	private Long quantity;
+
+	public static Coffee create(String name, String description, Long price, Long quantity) {
+		Coffee coffee = new Coffee();
+		coffee.name = name;
+		coffee.description = description;
+		coffee.price = price;
+		coffee.quantity = quantity;
+		return coffee;
+	}
+
+	public void increaseQuantity(Long quantity) {
+		this.quantity += quantity;
+	}
 
 	public void decreaseQuantity(Long quantity) {
 		if (this.quantity < quantity) {
