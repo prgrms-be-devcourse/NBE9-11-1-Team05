@@ -1,6 +1,9 @@
 package com.back.orderplz_01.orders.controller;
 
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -8,11 +11,11 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.back.orderplz_01.global.apiRes.ApiRes;
 import com.back.orderplz_01.orders.dto.request.CoffeeOrderReq;
-import com.back.orderplz_01.orders.dto.request.OrderSearchRequestDto;
 import com.back.orderplz_01.orders.dto.request.OrderStatusChangeReq;
 import com.back.orderplz_01.orders.dto.response.OrdersDetailRes;
 import com.back.orderplz_01.orders.dto.response.OrdersSearchListRes;
@@ -24,6 +27,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
+@Validated
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/orders")
@@ -39,16 +43,34 @@ public class OrdersController {
 		return ResponseEntity.ok(new ApiRes<>("원두 주문 완료", null));
 	}
 
+	/** CUS-09 주문 검색 API */
+	@GetMapping("/search")
+	@Operation(summary = "주문 검색 (이메일 주소 우편번호)")
+	public ResponseEntity<ApiRes<OrdersSearchListRes>> search(
+
+			@Parameter(description = "이메일")
+			@RequestParam
+			@NotBlank(message = "이메일을 입력해주세요.")
+			@Email(message = "이메일 형식이 올바르지 않습니다.")
+			String email,
+
+			@Parameter(description = "배송지(주소)")
+			@RequestParam
+			@NotBlank(message = "주소를 입력해주세요.")
+			String address,
+
+			@Parameter(description = "우편번호")
+			@RequestParam
+			@NotBlank(message = "우편번호를 입력해주세요.")
+			String zipCode
+	) {
+		return ResponseEntity.ok(new ApiRes<>("주문 검색 완료", ordersService.search(email, address, zipCode)));
+	}
+
 	@GetMapping("/{ordersId}")
 	@Operation(summary = "주문 상세 내역 조회")
 	public ResponseEntity<ApiRes<OrdersDetailRes>> ordersDetail(@PathVariable Long ordersId) {
 		return ResponseEntity.ok(new ApiRes<>("주문 상세 조회 완료", ordersService.ordersDetail(ordersId)));
-	}
-
-	/** CUS-09 주문 검색 API */
-	@PostMapping("/search")
-	public OrdersSearchListRes search(@Valid @RequestBody OrderSearchRequestDto request) {
-		return ordersService.search(request);
 	}
 
 	@DeleteMapping("/{ordersId}")
