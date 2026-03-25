@@ -64,9 +64,7 @@ public class OrdersController {
 			@NotBlank(message = "우편번호를 입력해주세요.")
 			String zipCode
 	) {
-		OrdersSearchListRes result = ordersService.search(email, address, zipCode);
-
-		return ResponseEntity.ok(new ApiRes<>("주문 검색 완료", result));
+		return ResponseEntity.ok(new ApiRes<>("주문 검색 완료", ordersService.search(email, address, zipCode)));
 	}
 
 	@GetMapping("/{ordersId}")
