@@ -231,7 +231,7 @@ public class OrdersService {
 	// ---------------------------------------------------------------------------
 	// OWN-09 업주 주문관리 - 전체 주문 목록 조회
 	// 결제 완료된 모든 주문 건을 보여줘야 하므로 findall 처리 Repository 사용 X
-	// 서비스에서 ordersRepository.findAll로 orderedAt 기준 정렬 조회하여 
+	// 서비스에서 ordersRepository.findAll로 orderedAt 기준 정렬 조회하여
 	// 해당 API에서 전체 주문 목록을 제공
 	// 반환 항목: 주문번호, 주문자 이메일, 주문일시, 총 금액
 

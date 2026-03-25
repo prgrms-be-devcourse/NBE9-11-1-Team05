@@ -41,7 +41,7 @@ public class Orders extends BaseEntity {
 
 	@Enumerated(EnumType.STRING)
 	@Column(nullable = false)
-	OrderStatus orderStatus;
+	private OrderStatus orderStatus;
 
 	@OneToMany(mappedBy = "orders", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
 	private List<OrdersItem> orderItems = new ArrayList<>();

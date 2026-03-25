@@ -17,6 +17,7 @@ import com.back.orderplz_01.orders.repository.OrdersRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+
 @Configuration
 @RequiredArgsConstructor
 @Slf4j
