@@ -165,7 +165,7 @@ public class OrdersService {
 			orderList.add(toOrdersSearchItemRes(order));
 		}
 
-		return new OrdersSearchListRes(orderList);
+		return new OrdersSearchListRes(email, orderList);
 	}
 
 	/* CUS-09 주문 정보 (주문번호,일자,주문상태,주문라인아이템,주소,우편번호,총금액) */
@@ -180,7 +180,6 @@ public class OrdersService {
 			order.getOrderedAt(),
 			order.getOrderStatus(),
 			orderLines,
-			order.getEmail(),
 			order.getAddress(),
 			order.getZipCode(),
 			order.getTotalAmount());
