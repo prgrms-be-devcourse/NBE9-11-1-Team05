@@ -8,13 +8,11 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Sort;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.back.orderplz_01.coffee.entity.Coffee;
 import com.back.orderplz_01.coffee.repository.CoffeeRepository;
-import com.back.orderplz_01.global.apiRes.ApiRes;
 import com.back.orderplz_01.orders.dto.request.CoffeeOrderList;
 import com.back.orderplz_01.orders.dto.request.CoffeeOrderReq;
 import com.back.orderplz_01.orders.dto.request.OrderSearchRequestDto;
@@ -40,14 +38,13 @@ public class OrdersService {
 	private final CoffeeRepository coffeeRepository;
 
 	public OrdersDetailRes ordersDetail(Long ordersId) {
-		Orders orders = ordersRepository.findById(ordersId)
+		Orders orders = ordersRepository.findByIdWithItems(ordersId)
 			.orElseThrow(() -> new EntityNotFoundException("존재하지 않는 주문입니다."));
-
 		return OrdersDetailRes.from(orders);
 	}
 
 	@Transactional
-	public ResponseEntity<ApiRes<Void>> pay(CoffeeOrderReq req) {
+	public void pay(CoffeeOrderReq req) {
 		// 커피 재고 여부 확인
 		Map<Long, Coffee> coffeeMap = checkCoffee(req.coffeeOrderList());
 
@@ -58,9 +55,6 @@ public class OrdersService {
 		if (!isBundled) {
 			createNewOrder(req, coffeeMap);
 		}
-
-		// ApiResponse에 오후 2시 기준 메시지 담기
-		return ResponseEntity.ok(new ApiRes<>("원두 주문이 완료되었습니다.", null));
 	}
 
 	private void createNewOrder(CoffeeOrderReq req, Map<Long, Coffee> coffeeMap) {
@@ -82,7 +76,7 @@ public class OrdersService {
 
 	private boolean bundleIfDuplicateOrder(CoffeeOrderReq req, Map<Long, Coffee> coffeeMap) {
 		LocalDateTime now = LocalDateTime.now();
-		LocalDateTime todayAt2pm = now.toLocalDate().atTime(18, 0);
+		LocalDateTime todayAt2pm = now.toLocalDate().atTime(14, 0);
 
 		if (now.isAfter(todayAt2pm)) {
 			return false; // 오후 2시 이후면 묶음 불가
