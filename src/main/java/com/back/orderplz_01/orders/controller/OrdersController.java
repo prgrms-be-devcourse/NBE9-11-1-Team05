@@ -64,6 +64,16 @@ public class OrdersController {
 		return ResponseEntity.ok(new ApiRes<>("주문 상세 조회 완료", ordersService.ordersDetail(ordersId)));
 	}
 
+	@DeleteMapping("/{ordersId}")
+	@Operation(
+		summary = "주문 삭제",
+		description = "묶음 배송의 경우 전체 삭제"
+	)
+	public ResponseEntity<ApiRes<Void>> deleteOrders(@PathVariable Long ordersId) {
+		ordersService.deleteOrders(ordersId);
+		return ResponseEntity.ok(new ApiRes<>("주문 취소 완료", null));
+	}
+
 	// OWN-04 : 주문 상태 변경 API
 	@PatchMapping("/{id}/status")
 	@Operation(
